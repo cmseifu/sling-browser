@@ -1,4 +1,4 @@
 sling-browser
 =============
 
-Simply Sling 7 Browser
+Simple Sling JCR Browser
