@@ -1,0 +1,5 @@
+{
+    "jcr:primaryType" : "sling:Folder",
+    "jcr:title" : "Sling JCR Browser",
+    "sling:resourceType" : "browser"
+}

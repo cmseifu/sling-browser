@@ -1,0 +1,22 @@
+Debug Sling in Eclipse
+
+You can use remote debugging to debug Sling in Eclipse, here's a little How-To
+
+start Sling from the command line with
+
+java -Xmx384M -agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar org.apache.sling.launchpad.app-6-SNAPSHOT.jar
+
+Open Menu Run-> Debug configurations
+
+Right-click on "Remote Java Applications"
+Choose "New"
+In the "Connect" tab choose the Eclipse Sling Project for the field "Project" with the browse button
+Let the Connection type be "Standard (Socket Attach)"
+The host should be localhost
+Set the Port to 30303
+On the source tab click the "Add" button
+Select "Java Project"
+Select all Sling projects and click OK
+Click "Debug"
+Now you should be able to set breakpoints, evaluate properties, and so on as usual.
+

@@ -1,0 +1,110 @@
+<!--
+install from eclipse
+-->
+<project name="browser-build" default="upload-apps">
+	<property file="build.properties"  />
+	<property name="generated.dir" location="target/generated" />
+	<property name="src.dir" location="${basedir}/src/main" />
+	<property name="updated.dir" location="updated" />
+	
+	<path id="lib.classpath">
+		<pathelement location="lib/ant-contrib.jar" />
+	</path>
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="lib.classpath" />
+	<condition property="isWindows">
+			<os family="windows" />
+	</condition>
+	<if>
+		<istrue value="${isWindows}" />
+		<then>
+			<property name="curl" location="lib/curl.exe" />
+			<property name="devNull" value="NUL" />
+		</then>
+		<else>
+			<property name="curl" value="curl" />
+			<property name="devNull" value="/dev/null" />
+		</else>
+	</if>
+		
+	<property name="curlSilent" value="-o &quot;${devNull}&quot; -s " />
+
+	<target name="mvn-clean">
+		<exec executable="${mvn}" dir="${basedir}">
+			<arg line="clean" />
+		</exec>
+	</target>
+
+	<target name="mvn-install">
+		<exec executable="${mvn}" dir="${basedir}">
+			<arg line="-P autoInstallBundle install -Dsling.url=http://${host}:${port}/system/console" />
+		</exec>
+	</target>
+	
+	
+	<target name="mvn-clean-install" depends="mvn-clean">
+		<antcall target="mvn-install" />
+	</target>
+	
+	<target name="upload-apps">
+		<zip destfile="${generated.dir}/${publication}-apps.zip" >
+			<zipfileset erroronmissingdir="false" dir="${src.dir}/resources/SLING-CONTENT/apps/${publication}" excludes="config/** **/.json **/.vlt **/*.svn/"/>
+		</zip>
+		<if>
+			<available file="${generated.dir}/${publication}-apps.zip" type="file"/>
+			<then>
+				<echo>Posting APP changes...</echo>
+				<exec executable="${curl}">
+					<arg line='-o "${devNull}" -s -F":operation=import" -F":contentType=zip"  -F":contentFile=@${generated.dir}/${publication}-apps.zip" http://${username}:${password}@${host}:${port}/apps/${publication}' />
+				</exec>
+				<echo>Done Posting!!!</echo>
+			</then>
+		</if>
+	</target>
+	
+	
+	<target name="stop-bundle">
+		<!-- From https://gist.github.com/sergeimuller/2916697 -->
+		<echo>Stopping [${bundleName}]...</echo>
+		<exec executable="${curl}">
+			<arg line='-o "${devNull}" -s -F"action=stop" http://${username}:${password}@${host}:${port}/system/console/bundles/${bundleName}' />
+		</exec>
+	</target>
+	
+	
+	<!-- Use this to reload the scripting core, including jsp/esp/gsp/groovy -->
+	<target name="restart-sling-scripting-core">
+		<property name="sling-scripting-core" value="org.apache.sling.scripting.core" />
+		<exec executable="${curl}">
+			<arg line='-o "${devNull}" -s -F"action=stop" http://${username}:${password}@${host}:${port}/system/console/bundles/${sling-scripting-core}' />
+		</exec>
+		<sleep seconds="2" />
+		<exec executable="${curl}">
+			<arg line='-o "${devNull}" -s -F"action=start" http://${username}:${password}@${host}:${port}/system/console/bundles/${sling-scripting-core}' />
+		</exec>
+	
+	</target>
+	
+	<target name="start-bundle">
+			<!-- From https://gist.github.com/sergeimuller/2916697 -->
+		<echo>Starting [${bundleName}]...</echo>
+		<exec executable="${curl}">
+			<arg line='-o "${devNull}" -s -F"action=start" http://${username}:${password}@${host}:${port}/system/console/bundles/${bundleName}' />
+		</exec>
+			
+	</target>
+	
+	<target name="start-sling">
+				
+			<echo>java -agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar ${sling.jar} -p ${port}</echo>
+			<exec executable="java" spawn="true" dir="${sling.homedir}">
+				<arg line='-agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar ${sling.jar} -p ${port}' />
+			</exec>
+		</target>
+	
+
+	<target name="restart-bundle" depends="stop-bundle">
+		<sleep seconds="2" />
+		<antcall target="start-bundle" />
+	</target>
+	
+</project>
