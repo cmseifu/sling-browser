@@ -265,8 +265,9 @@ $(document).ready(function() {
 		var propertiesFrame = $('#propertiesFrame');
 		function updateCurrent(node,storeState) {
 			tabProperties.tab('show');
-			if (!propertiesFrame.attr('src') || propertiesFrame.attr('src').indexOf(node.path) == -1) {
-				propertiesFrame[0].src ='/browser.edit.html'+node.path+'?editType=properties';
+			// Need to do this instead of change the src attr as it will add the frame to the history */
+			if (!propertiesFrame[0].contentDocument.location.href.match(node.path+"$")) {
+				propertiesFrame[0].contentDocument.location.replace('/browser.edit.html'+node.path+'?editType=properties');
 			}
 			currentNode = node;
 			updateNav(node.path);
@@ -294,7 +295,7 @@ $(document).ready(function() {
 		
 		// Push the browser history
 		function pushState(node) {
-			history.pushState(node.id, node.path, "/browser.html"+node.path);
+			history.pushState(node.path, node.path, "/browser.html"+node.path);
 		}
 
 		function addTab(fileItem) {
@@ -313,9 +314,9 @@ $(document).ready(function() {
 					  if (!tabContent.data('loaded')) {
 						  tabContent.data('loaded',true);
 						  if (node.openType == 'image') {
-							  tabContent.html('<img src="'+node.path+'"/>');
+							 // tabContent.html('<img src="'+node.path+'"/>');
 						  } else {
-							  tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&fileType='+node.fileType+'"></iframe>');
+							  //tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&fileType='+node.fileType+'"></iframe>');
 						  }
 					  }
 				});
@@ -335,28 +336,15 @@ $(document).ready(function() {
 			pageTab.find('li:last a').tab('show');
 		}
 		
-		var folderClickHandler = function(e) { 
-			e.preventDefault(); 
-			e.stopPropagation(); 
-			var container = $(this).closest('div[data-path]');
-			selectNode(container.data('path'),true);
-		}
-		// Process each item to build the action menus, details and events
-	
-		function processItem() {
-			var _self = $(this);
-			_self.find('a').first().on('click', folderClickHandler);
-			var icon = 'file';
-			if (_self.data('type')=='folder') {
-				icon = 'folder-close';
-			} else if (_self.data('extension')) {
-				icon = 'pencil';
-				_self.on('dblclick', fileOpenDBClickHandler);
+		
+		
+		// On browser navigation button pushed.
+		window.onpopstate = function(event) {
+			if (event.state != null) {
+				currentPath  = event.state;
+				restoreState(buildPaths());
 			}
-			_self.prepend('<span class="glyphicon glyphicon-'+icon+'"></span> ');
-			
-			
-		}
+		};
 		
 		/*
 		var lastsel2;
