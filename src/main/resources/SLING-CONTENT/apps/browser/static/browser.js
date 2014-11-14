@@ -314,9 +314,9 @@ $(document).ready(function() {
 					  if (!tabContent.data('loaded')) {
 						  tabContent.data('loaded',true);
 						  if (node.openType == 'image') {
-							 // tabContent.html('<img src="'+node.path+'"/>');
+							 tabContent.html('<img src="'+node.path+'"/>');
 						  } else {
-							  //tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&fileType='+node.fileType+'"></iframe>');
+							 tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&fileType='+node.fileType+'"></iframe>');
 						  }
 					  }
 				});
