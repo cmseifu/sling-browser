@@ -93,14 +93,20 @@ install from eclipse
 			
 	</target>
 	
-	<target name="start-sling">
+	<target name="START-sling">
 				
 			<echo>java -agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar ${sling.jar} -p ${port}</echo>
 			<exec executable="java" spawn="true" dir="${sling.homedir}">
-				<arg line='-agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar ${sling.jar} -p ${port}' />
+				<arg line='-agentlib:jdwp=transport=dt_socket,address=30303,server=y,suspend=n -jar ${sling.jar} start -p ${port}' />
 			</exec>
 		</target>
 	
+	<target name="STOP-sling">
+			<echo>java -jar ${sling.jar} stop -j localhost:8081</echo>
+			<exec executable="java" dir="${sling.homedir}">
+				<arg line='-jar ${sling.jar} stop' />
+			</exec>
+		</target>
 
 	<target name="restart-bundle" depends="stop-bundle">
 		<sleep seconds="2" />

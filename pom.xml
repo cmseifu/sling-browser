@@ -20,12 +20,34 @@
 		Browse/Edit JCR Content 
   	</description>
 	<packaging>bundle</packaging>
-	
+	<properties>
+		<skipTests>true</skipTests>
+		<skipSource>true</skipSource>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<animal.sniffer.skip>true</animal.sniffer.skip>
+		<sling.initial.content>
+				SLING-CONTENT/;path:=/
+		</sling.initial.content>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-scr-plugin</artifactId>
+				<version>1.9.0</version>
+				<executions>
+					<execution>
+						<id>generate-scr-scrdescriptor</id>
+						<goals>
+							<goal>scr</goal>
+						</goals>
+						<configuration>
+							<properties>
+								<service.vendor>The Apache Software Foundation</service.vendor>
+							</properties>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.sling</groupId>
@@ -43,46 +65,12 @@
 						<Export-Package>
 							org.apache.sling.browser.*
 						</Export-Package>
-						<Sling-Initial-Content>SLING-CONTENT/;path:=/</Sling-Initial-Content>
+						<Sling-Initial-Content>${sling.initial.content}</Sling-Initial-Content>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>1.9.0</version>
-                    <!-- As QDox is trying to inspect/load the classes
-                         we have to add a slf4j implementation to the
-                         class path of the plugin - we usually use
-                         a static field for the logger and during class
-                         loading this field requires an slf4j implementation!
-                     -->
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-simple</artifactId>
-                            <version>1.5.2</version>
-                        </dependency>
-                    </dependencies>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-scrdescriptor</id>
-                            <goals>
-                                <goal>scr</goal>
-                            </goals>
-                            <configuration>
-                                <properties>
-                                    <service.vendor>The Apache Software Foundation</service.vendor>
-                                </properties>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-              </plugins>
-             </pluginManagement>
+
 	</build>
 
 	<profiles>
@@ -205,7 +193,6 @@
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.sling</groupId>
