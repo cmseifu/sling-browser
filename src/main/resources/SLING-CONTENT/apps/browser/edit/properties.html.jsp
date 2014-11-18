@@ -91,7 +91,7 @@
 			}
 %>
 	<tr <%=readonlyClass %>>
-		<td><%=name%></td>
+		<td><%=name%><%= propertyDefinition.isMultiple()?"[]": "" %></td>
 		<td><%=value%></td>
 		<td>[
 			 protected: <%= propertyDefinition.isProtected() %>, 
