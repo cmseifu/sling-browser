@@ -12,18 +12,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<sling:include resource="${resource}" replaceSelectors="components.head"/>
+		<sling:include replaceSelectors="components.head"/>
 	</head>
 	<body>
 		<c:choose>
 			<c:when test="${slingRequest.resourceResolver.userID == 'anonymous'}">
-				<sling:include resource="${resource}" replaceSelectors="components.login"/>
+				<sling:include replaceSelectors="components.login"/>
 			</c:when>
 			<c:otherwise>
-			<sling:include resource="${resource}" replaceSelectors="components.bodyContent"/>
+			<sling:include replaceSelectors="components.bodyContent"/>
 		</c:otherwise>
 		</c:choose>
-		<sling:include resource="${resource}" replaceSelectors="components.tail"/>
+		<sling:include replaceSelectors="components.tail"/>
 	</body>
 </html>
 
