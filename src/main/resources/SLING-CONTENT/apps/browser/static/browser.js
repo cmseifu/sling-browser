@@ -1,16 +1,17 @@
 $(document).ready(function() {
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
-		$("#loginModal").on('shown', function() {
+		$("#loginModal").on('shown.bs.modal', function() {
 			$('#login-form #j_username').focus();
 		});
 		$('#login-form').on('submit', function(event) {
 			event.preventDefault();
 			$.post('/j_security_check', $(this).serialize(), function(data) {
+				$('#login-form .alert').addClass('hide');
 				window.location.reload(true);
-			}).fail(function(xhr, textStatus, errorThrown) {
-				alert('failed')
-				$('#login-form .alert').fadeOut(500).fadeIn(1000);
-			});
+			}).fail(function() {
+				$('#login-form .alert').removeClass('hide').fadeOut(500).fadeIn(1000);
+				
+			})
 		});
 		if (isAnonymous) {
 			$('#loginModal').modal('show');
@@ -32,7 +33,7 @@ $(document).ready(function() {
 		var tabContentTmpl = $('#tabContentTmpl').clone().removeAttr('id');
 		
 		/* double click on tab gives full screen */
-		pageTab.on('dblclick', function(e) {
+		$('#full-screen, #small-screen').on('click', function(e) {
 			$('body').toggleClass('full-screen');
 		})
 		/*

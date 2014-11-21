@@ -14,7 +14,8 @@
 		<div id="browseTree"></div>
 	</div>
 	<div class="col-b">
-			
+		<span id="full-screen" class="glyphicon glyphicon-resize-full" title="full"></span>
+		<span id="small-screen" class="glyphicon glyphicon-resize-small" title="small"></span>
 		<ul id="pageTab" class="nav nav-tabs">
 			<li><a href="#tabProperties" data-toggle="tab">Properties</a></li>
 		</ul>
@@ -31,5 +32,7 @@
 	<li id="tabTmpl"><a data-toggle="tab"></a><span>x</span></li>
 	<div id="tabContentTmpl" class="tab-pane"></div>
 </div>
+
+<div class="screenLock"></div>
 
 

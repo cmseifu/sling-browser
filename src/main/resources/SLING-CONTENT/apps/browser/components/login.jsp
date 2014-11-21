@@ -1,4 +1,4 @@
-
+<form id="login-form" method="post">
 <div id="loginModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -6,8 +6,8 @@
 				<h4 class="modal-title">Login</h4>
 			</div>
 			<div class="modal-body">
-				<form id="login-form" method="post">
-
+					<div class="hide alert alert-danger" role="alert">Invalid username or
+						password, please try again</div>
 					<label for="Username" class="required">Username <span
 						class="required">*</span></label>
 					<div class="input-prepend">
@@ -20,16 +20,15 @@
 						<input name="j_password" id="j_password" type="password"
 							placeholder="Password" />
 					</div>
-					<div class="hide alert alert-error">Invalid username or
-						password, please try again</div>
+					
 					<input type="hidden" name="_charset_" value="utf-8" /> <input
 						type="hidden" name="j_validate" value="true" />
 					<!-- Secret to simulate a enter=submit -->
 					<input type="submit" style="visibility: hidden" />
-				</form>
+				
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" id="confirmLoginBtn">Submit</button>
+				<input type="submit" class="btn btn-primary" id="confirmLoginBtn" value="Submit" />
 			</div>
 		</div>
 		<!-- /.modal-content -->
@@ -37,3 +36,4 @@
 	<!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+</form>

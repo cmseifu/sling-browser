@@ -154,3 +154,49 @@ body.full-screen .col-b {
 	left: 0px;
 	width: 100%;
 }
+
+#full-screen {
+	display:block;
+	position:absolute;
+	right:10px;
+	top:10px;
+}
+#small-screen {
+	display:none;
+	position:absolute;
+	right:10px;
+	top:10px;
+}
+
+#full-screen:hover, #small-screen:hover {
+	color:red;
+}
+body.full-screen #full-screen {
+	display:none;
+}
+body.full-screen #small-screen {
+	display:block;
+}
+
+.screenLock {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	max-height: 100%;
+	top: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	background: rgba(255, 255, 255, 0.8);
+	overflow-y: hidden;
+	overflow-x: hidden;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: -1;
+	line-height:normal;
+	letter-spacing:normal;
+} 
+

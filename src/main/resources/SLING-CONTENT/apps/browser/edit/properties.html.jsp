@@ -46,7 +46,7 @@
  }
  
  .value-edit textarea {
- 	width: 80%;
+ 	width: 95%;
 	resize: vertical;
  }
  
@@ -85,6 +85,35 @@ a.clearlink {
     border: 0px solid;
 }
 
+.screenLock {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	max-height: 100%;
+	top: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	background: rgba(255, 255, 255, 0.8);
+	overflow-y: hidden;
+	overflow-x: hidden;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: -1; 
+	line-height:normal;
+	letter-spacing:normal;
+}
+
+body.lock .screenLock {
+	z-index:100;
+}
+
+body.lock .value-edit {
+	z-index:101;
+}
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
@@ -157,7 +186,7 @@ a.clearlink {
 					 --%>
 					<td class="actions">
 						<% if (!(propertyDefinition.isProtected() || name.equals("jcr:data"))) { %>
-							<span class="glyphicon glyphicon-remove" title="delete this property"></span> 
+							<span class="glyphicon glyphicon-trash" title="delete this property"></span> 
 						<% } %>
 					</td>
 				</tr>
@@ -181,11 +210,17 @@ a.clearlink {
 		$('tr:not(.readonly)').on('dblclick', function() {
 			var _self = $(this);
 			_self.toggleClass('editing');
+			$('body').toggleClass('lock');
+			
 			if (!_self.data('renderForm')) {
 				_self.data('renderForm',true);
 				createEditPanel(_self);
 			}
-			//11509761175
+			if (_self.is('.editing')) {
+				var valueEdit = _self.find('.value-edit')
+				var clientRect = valueEdit[0].getBoundingClientRect();
+				valueEdit.css({position:'fixed',width:clientRect.width , left:clientRect.left, top:clientRect.top});
+			}
 		})
 		// JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
 		function createEditPanel(trElement) {
@@ -193,7 +228,7 @@ a.clearlink {
 			var type = trElement.data('type');
 			var isMultiple =  trElement.data('multiple')
 			var valueEdit = trElement.find('.value-edit');
-			var out = [];
+			var out = ['<form>'];
 			if (!isMultiple) {
 				var val = valueEdit.find('span').text();
 				if (type == 'Boolean') {
@@ -210,6 +245,8 @@ a.clearlink {
 			} else {
 				
 			}
+			out.push('</form>');
+			out.push('<span class="glyphicon glyphicon-ok" title="save changes"></span><span class="glyphicon glyphicon-remove" title="cancel"></span>');
 		 	valueEdit.empty().append(out.join(''));
 		}
 		
@@ -263,6 +300,6 @@ a.clearlink {
 		
 	
 	</script>
-
+	<div class="screenLock"></div>
 </body>
 </html>
