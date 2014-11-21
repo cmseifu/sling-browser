@@ -45,6 +45,15 @@
  	display:none;
  }
  
+ .value-edit textarea {
+ 	width: 80%;
+	resize: vertical;
+ }
+ 
+ .editing {
+ 	-webkit-user-select:none;
+ 	user-select:none;
+ }
  .editing .value-edit {
  	display:block;
  }
@@ -102,9 +111,7 @@ a.clearlink {
 					Session session = currentNode.getSession();
 					/*
 					AccessControlManager acm = currentNode.getSession().getAccessControlManager();
-					
 					Privilege[] privileges = acm.getPrivileges(currentNode.getPath());
-					
 					for (int i=0;i<privileges.length;i++) {
 						out.println(privileges[i].getName());
 					}
@@ -149,8 +156,8 @@ a.clearlink {
 					</td>
 					 --%>
 					<td class="actions">
-						<% if (!propertyDefinition.isProtected()) { %>
-							<span class="glyphicon glyphicon-remove"></span> 
+						<% if (!(propertyDefinition.isProtected() || name.equals("jcr:data"))) { %>
+							<span class="glyphicon glyphicon-remove" title="delete this property"></span> 
 						<% } %>
 					</td>
 				</tr>
@@ -178,6 +185,7 @@ a.clearlink {
 				_self.data('renderForm',true);
 				createEditPanel(_self);
 			}
+			//11509761175
 		})
 		// JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
 		function createEditPanel(trElement) {
@@ -187,8 +195,9 @@ a.clearlink {
 			var valueEdit = trElement.find('.value-edit');
 			var out = [];
 			if (!isMultiple) {
+				var val = valueEdit.find('span').text();
 				if (type == 'Boolean') {
-					out.push('<input type="checkbox" name="'+name+'" value="'+valueEdit.text()+'" checked="'+valueEdit.text()+'" />');
+					out.push('<input type="checkbox" name="'+name+'" value="'+val+'" checked="'+val+'" />');
 				} else if (type == 'Reference') {
 					//TODO
 				} else if (type == 'Date') {
@@ -196,7 +205,7 @@ a.clearlink {
 				} else if (type == 'Name') {
 					//TODO
 				} else {
-					out.push('<input type="textarea"  name="'+name+'" value="'+valueEdit.text()+'" />');
+					out.push('<textarea name="'+name+'">'+val+'</textarea>');
 				}
 			} else {
 				
