@@ -200,3 +200,10 @@ body.full-screen #small-screen {
 	letter-spacing:normal;
 } 
 
+body.lock .screenLock {
+	z-index:100;
+}
+
+body.lock .col-b {
+	z-index:101;
+}

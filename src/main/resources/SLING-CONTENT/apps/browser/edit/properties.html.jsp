@@ -114,6 +114,24 @@ body.lock .screenLock {
 body.lock .value-edit {
 	z-index:101;
 }
+
+.glyphicon {
+	cursor:pointer;
+}
+.glyphicon:hover {
+	color:red;
+}
+
+.glyphicon-ok:hover {
+	color:green;
+}
+
+.value-edit {
+	box-shadow: 1px 1px 8px 1px;
+	border-radius: 5px;
+	padding:5px;
+	background-color:#FFFae6;
+}
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
@@ -210,6 +228,9 @@ body.lock .value-edit {
 		$('tr:not(.readonly)').on('dblclick', function() {
 			var _self = $(this);
 			_self.toggleClass('editing');
+			if (window.parent && window.parent.document) {
+				$('body', window.parent.document).toggleClass('lock');
+			}
 			$('body').toggleClass('lock');
 			
 			if (!_self.data('renderForm')) {
@@ -246,7 +267,15 @@ body.lock .value-edit {
 				
 			}
 			out.push('</form>');
-			out.push('<span class="glyphicon glyphicon-ok" title="save changes"></span><span class="glyphicon glyphicon-remove" title="cancel"></span>');
+			out.push('<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>');
+			valueEdit.on('click', function(e) {
+				if (e.target.nodeName == 'SPAN') {
+					action = $(e.target).data('action');
+					if (action == 'cancel') {
+						$(e.target).closest('tr').trigger('dblclick');
+					}
+				}
+			})
 		 	valueEdit.empty().append(out.join(''));
 		}
 		
