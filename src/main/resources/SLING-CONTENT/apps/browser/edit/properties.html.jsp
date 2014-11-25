@@ -23,6 +23,7 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <link href="${staticRoot}/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
  <style>
+ 
  .table>thead>tr>th {
  	border-top:none;
  }
@@ -126,12 +127,25 @@ body.lock .value-edit {
 	color:green;
 }
 
+.value-edit:before {
+	content: attr(title);
+	display: inline-block;
+	font-weight:bold;
+	font-size:1.1em;
+	color: #476C8A;
+}
+
+
 .value-edit {
-	box-shadow: 1px 1px 8px 1px;
+	background-color: rgba(255, 255, 255, 0.90);
+	border: 1px solid #999;
+	box-shadow: 3px 5px 20px 2px #ddd;
+	box-sizing: border-box;
 	border-radius: 5px;
 	padding:5px;
-	background-color:#FFFae6;
 }
+
+
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
@@ -156,13 +170,6 @@ body.lock .value-edit {
 				String path = currentNode.getPath();
 				if (properties != null) {
 					Session session = currentNode.getSession();
-					/*
-					AccessControlManager acm = currentNode.getSession().getAccessControlManager();
-					Privilege[] privileges = acm.getPrivileges(currentNode.getPath());
-					for (int i=0;i<privileges.length;i++) {
-						out.println(privileges[i].getName());
-					}
-					*/
 					while (properties.hasNext()) {
 						Property p = properties.nextProperty();
 						PropertyDefinition propertyDefinition = p.getDefinition();
@@ -181,27 +188,20 @@ body.lock .value-edit {
 							values = new String[1];
 							values[0] = name.equals("jcr:data") ? "binary" : p.getString();
 						}
-						String propertyType = PropertyType.nameFromValue(propertyDefinition.getRequiredType());
+						String propertyType = PropertyType.nameFromValue(p.getType());
 			%>
-				<tr class="<%=readonlyClass%>" data-name="<%=name%>" data-type="<%=propertyType %>" data-multiple="<%=p.isMultiple() %>" >
+				<tr class="<%=readonlyClass%> alert" data-name="<%=name%>" data-type="<%=propertyType %>" data-multiple="<%=p.isMultiple() %>" >
 					<td><%=name%></td>
 					<td><%=propertyType %><%= propertyDefinition.isMultiple()?"[]": "" %></td>
 					<td>
 						<div class="value-display"><%= StringUtils.join(values,", ") %></div>
-						<div class="value-edit">
+						<div class="value-edit" title="<%=name%>">
 							<% for (String value:values) { %>
 							<span><%=value%></span>
 							<% } %>
 						</div>
 					</td>
-					<%--
-					<td>[
-						 protected: <%= propertyDefinition.isProtected() %>, 
-						 autoCreated: <%= propertyDefinition.isAutoCreated() %>, 
-						 mandatory: <%= propertyDefinition.isMandatory() %>
-						 ]
-					</td>
-					 --%>
+					
 					<td class="actions">
 						<% if (!(propertyDefinition.isProtected() || name.equals("jcr:data"))) { %>
 							<span class="glyphicon glyphicon-trash" title="delete this property"></span> 
@@ -215,21 +215,23 @@ body.lock .value-edit {
 			</tbody>
 		</table>
 	</div>
-	<form id="propertyForm" class="form-horizontal" method="post"
-		action="${resource.path}" enctype="multipart/form-data">
-		<fieldset>
-			<input type="hidden" name=":redirect"
-				value="<%=slingRequest.getRequestURL()%>" /> <input type="hidden"
-				name=":errorpage" value="<%=slingRequest.getRequestURL()%>" />
-		</fieldset>
-	</form>
-	
+	<div style="display:none">
+		<form id="propertyFormTmpl"  method="post" action="${resource.path}" enctype="multipart/form-data">
+			<%--
+			<input type="hidden" name=":redirect" value="${slingRequest.requestURL}?editType=${param.editType}" />
+			<input type="hidden" name=":errorpage" value="${slingRequest.requestURL}?editType=${param.editType}" />
+			 --%>
+			<div class="clear"></div>
+			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
+		</form>
+	</div>
 	<script>
+		var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
 		$('tr:not(.readonly)').on('dblclick', function() {
 			var _self = $(this);
 			_self.toggleClass('editing');
 			if (window.parent && window.parent.document) {
-				$('body', window.parent.document).toggleClass('lock');
+				$( window.parent.document).find('body').toggleClass('lock');
 			}
 			$('body').toggleClass('lock');
 			
@@ -249,7 +251,8 @@ body.lock .value-edit {
 			var type = trElement.data('type');
 			var isMultiple =  trElement.data('multiple')
 			var valueEdit = trElement.find('.value-edit');
-			var out = ['<form>'];
+			var propertyForm = propertyFormTmpl.clone();
+			var out = [];
 			if (!isMultiple) {
 				var val = valueEdit.find('span').text();
 				if (type == 'Boolean') {
@@ -260,23 +263,54 @@ body.lock .value-edit {
 					//TODO
 				} else if (type == 'Name') {
 					//TODO
+				} else if (type == 'Long'){
+					out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+val+'" />');
 				} else {
 					out.push('<textarea name="'+name+'">'+val+'</textarea>');
 				}
 			} else {
 				
 			}
-			out.push('</form>');
-			out.push('<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>');
 			valueEdit.on('click', function(e) {
 				if (e.target.nodeName == 'SPAN') {
-					action = $(e.target).data('action');
+					var $target = $(e.target);
+					action = $target.data('action');
 					if (action == 'cancel') {
-						$(e.target).closest('tr').trigger('dblclick');
+						$target.closest('tr').trigger('dblclick');
+					} else if (action == 'ok') {
+						var $form = $target.closest('form');
+						var isValid;
+						$form.on('submit', function(e) {
+							e.preventDefault();
+							var field = $form.find('input[pattern]')[0];
+							console.log(field);
+							if (typeof field.willValidate !== 'undefined') {
+								field.checkValidity();
+								isValid = field.validity.valid;
+								console.log(isValid);
+							}
+							return false;
+						});
+						$form.submit();
+						/*
+						$.post($form.attr('action'), $form.serialize())
+						.done(function(data) {
+							var dataHtml = $(data);
+							var status = dataHtml.find('#Status').text();
+							var message = dataHtml.find('#Message').text();
+							if (status == '200' && message == 'OK') {
+								valueEdit.prev().text($form.find('[name='+name+']').val());
+								valueEdit.closest('tr').trigger('dblclick').addClass('alert-success').fadeOut(500).fadeIn(1000,function() {$(this).removeClass('alert-success')});
+							}
+						}).fail(function(jqXHR, textStatus, errorThrown) {
+							console.log(textStatus,errorThrown,jqXHR);
+						})
+						*/
+						//$target.closest('form').submit();
 					}
-				}
+				} 
 			})
-		 	valueEdit.empty().append(out.join(''));
+		 	valueEdit.empty().append(propertyForm.prepend(out.join('')));
 		}
 		
 	 	function openEdit(event) {
