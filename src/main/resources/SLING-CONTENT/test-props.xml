@@ -1,0 +1,60 @@
+<node>
+	<name>test-props</name>
+	<primaryNodeType>sling:Folder</primaryNodeType>
+
+
+	<mixinNodeType>mix:versionable</mixinNodeType>
+	<mixinNodeType>mix:lockable</mixinNodeType>
+
+	<!-- Optional properties for the node. Each <property> element defines a 
+		single property of the node. The element may be repeated. -->
+
+	<properties>
+		<property>
+			<name>string</name>
+			<value>String Value</value>
+			<type>String</type>
+		</property>
+		<property>
+			<name>date</name>
+			<value>2014-10-23T14:05:36.691-04:00</value>
+			<type>Date</type>
+		</property>
+		<property>
+			<name>boolean</name>
+			<value>true</value>
+			<type>Boolean</type>
+		</property>
+		<property>
+			<name>long</name>
+			<value>12345</value>
+			<type>Long</type>
+		</property>
+		<property>
+			<name>double</name>
+			<value>123.45</value>
+			<type>Double</type>
+		</property>
+		<property>
+			<name>path</name>
+			<value>/test-props</value>
+			<type>Path</type>
+		</property>
+		<property>
+			<name>reference</name>
+			<value>fc789650-63de-4320-bdbe-caaffc25fa9c</value>
+			<type>Reference</type>
+		</property>
+		<property>
+			<name>strarr</name>
+			<values>
+				<value>value1</value>
+				<value>value2</value>
+				<value>value3</value>
+			</values>
+			<type>String</type>
+		</property>
+	</properties>
+
+
+</node>
