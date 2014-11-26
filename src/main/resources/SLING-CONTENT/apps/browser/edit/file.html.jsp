@@ -58,7 +58,7 @@ nav {
 		var aceMode = "ace/mode/${param.fileType}";
 	</script>
 	<script src="${staticRoot}/ace-1.1.7/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script src="${staticRoot}/editor.js" type="text/javascript" charset="utf-8"></script>
+	<script src="${staticRoot}/edit/file.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
 
