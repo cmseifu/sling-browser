@@ -62,30 +62,6 @@
  	display:none;
  }
  
- .divclearable {
-    border: 1px solid #888;
-    display: -moz-inline-stack;
-    display: inline-block;
-    zoom:1;
-    *display:inline;
-    padding-right:5px;
-    vertical-align:middle;
-}
-  
-a.clearlink {
-    background: url("close-button.png") no-repeat scroll 0 0 transparent;
-    background-position: center center;
-    cursor: pointer;
-    display: -moz-inline-stack;
-    display: inline-block;
-    zoom:1;
-    *display:inline;
-    height: 12px;
-    width: 12px;
-    z-index: 2000;
-    border: 0px solid;
-}
-
 .screenLock {
 	position: fixed;
 	width: 100%;
@@ -143,8 +119,31 @@ body.lock .value-edit {
 	box-sizing: border-box;
 	border-radius: 5px;
 	padding:5px;
+	width:100%;
 }
 
+.fieldItem {
+	position:relative;
+	float:left;
+}
+
+.fieldItem.single {
+	width:100%;
+}
+
+.fieldItem input[type=text] {
+	border:1px solid #999;
+	padding:3px;
+	
+}
+
+.fieldItem .glyphicon-remove-circle {
+	left:-18px;
+}
+
+.clear {
+	clear:both;
+}
 
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>

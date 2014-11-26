@@ -39,8 +39,16 @@ function createEditPanel(trElement) {
 	var valueEdit = trElement.find('.value-edit');
 	var propertyForm = propertyFormTmpl.clone();
 	var out = [];
-	if (!isMultiple) {
-		var val = valueEdit.find('span').text();
+	
+	/* $( ":checkbox" )
+  .map(function() {
+    return this.id;
+  })
+  .get()
+  .join(); */
+	valueEdit.find('span').each(function () {
+		var val = $(this).text();
+		out.push('<div class="fieldItem'+(!isMultiple ? ' single':'')+'">')
 		if (type == 'Boolean') {
 			/* Because checkbox is not submitted, we need to provide default value */
 			out.push('<input type="checkbox" name="'+name+'" onclick="this.value=this.checked?true:false" value="'+val+'" '+(val=='true' ? 'checked="checked"': '')+' />');
@@ -55,14 +63,26 @@ function createEditPanel(trElement) {
 		} else if (type == 'Long'){
 			out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+val+'" />');
 		} else if (type == 'Double') {
-			out.push('<input type="text" required pattern="\\d+(\\.\\d{2})?" name="'+name+'" value="'+val+'" />');
+			out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+val+'" />');
+		} else if (type == 'String') {
+			if (isMultiple) {
+				out.push('<input type="text" name="'+name+'" value="'+val+'" />');
+			} else {
+				out.push('<textarea name="'+name+'">'+val+'</textarea>');
+			}
 		}
 		else {
-			out.push('<textarea name="'+name+'">'+val+'</textarea>');
+			
 		}
-	} else {
-		
+		if (isMultiple) {
+			out.push('<span class="glyphicon glyphicon-remove-circle" data-action="remove-prop"></span>')
+		}
+		out.push('</div>')
+	});
+	if (isMultiple) {
+		out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
 	}
+	
 	valueEdit.on('click', function(e) {
 		if (e.target.nodeName == 'SPAN') {
 			e.preventDefault();
@@ -70,7 +90,11 @@ function createEditPanel(trElement) {
 			action = $target.data('action');
 			if (action == 'cancel') {
 				$target.closest('tr').trigger('dblclick');
-			} else if (action == 'ok') {
+			} else if (action == 'remove-prop') {
+				$target.parent().remove();
+			}  
+			
+			else if (action == 'ok') {
 				var $form = $target.closest('form');
 				var isValid = true;
 				var fields = $form.find('input[pattern]');
@@ -97,7 +121,7 @@ function createEditPanel(trElement) {
 							if (type == 'Boolean') {
 								valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
 							} else {
-								valueEdit.prev().text($form.find('[name='+name+']').val());
+								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
 							}
 							valueEdit.closest('tr').trigger('dblclick').addClass('alert-success').fadeOut(500).fadeIn(1000,function() {$(this).removeClass('alert-success')});
 						}
