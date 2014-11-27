@@ -30,6 +30,7 @@ body {
 	height: 95%;
 	overflow: auto;
 	position: relative;
+	clear:left;
 }
 
 .col-a {
@@ -85,6 +86,7 @@ body {
 	margin: 0 0 0 0;
 	text-overflow: initial;
 	overflow: visible;
+	cursor:default;
 }
 
 .jqtree-tree .jqtree-loading>div .jqtree-title:after {
