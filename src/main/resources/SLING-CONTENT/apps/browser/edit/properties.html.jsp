@@ -1,3 +1,6 @@
+<%@page import="org.apache.commons.lang.ArrayUtils"%>
+<%@page import="javax.jcr.nodetype.NodeType"%>
+<%@page import="javax.jcr.nodetype.NodeTypeIterator"%>
 <%@page import="javax.jcr.PropertyType"%>
 <%@page import="javax.jcr.nodetype.PropertyDefinition"%>
 <%@page import="javax.jcr.security.Privilege"%>
@@ -151,11 +154,20 @@ body.lock .value-edit {
 	clear:both;
 }
 
+.mixinItem {
+	
+}
+
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
 <body>
 	<div class="container">
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+		  <div class="btn-group" role="group" aria-label="..."> 
+		  	<button type="button" class="btn btn-default" id="mixinBtn">Mixins</button>
+		  </div>
+		</div>
 		<table class="table table-condensed">
 			<tbody>
 				<thead>
@@ -170,7 +182,7 @@ body.lock .value-edit {
 						
 			<%
 				PropertyIterator properties = currentNode.getProperties();
-				String primaryType = currentNode.getProperty("jcr:primaryType").getString();
+				
 				String resourceType = resource.getResourceType();
 				String path = currentNode.getPath();
 				if (properties != null) {
@@ -230,7 +242,50 @@ body.lock .value-edit {
 			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
 		</form>
 	</div>
+	<form  method="post" action="${resource.path}" enctype="multipart/form-data">
+		<div id="mixinModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Mixin Types</h4>
+					</div>
+					<div class="modal-body">
+						<div>
+							<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
+							
+								 <% 
+								 	NodeType primaryType = currentNode.getPrimaryNodeType();
+								    NodeType[] mixins = currentNode.getMixinNodeTypes();
+								 	while(nodeTypes.hasNext()) { 
+										NodeType nt = nodeTypes.nextNodeType();
+										StringBuilder sb = new StringBuilder();
+										if ( primaryType.equals(nt)) {
+											sb.append("disabled ");
+										} 
+										if ( ArrayUtils.contains(mixins, nt)) {
+											sb.append("checked ");
+										}
+										sb.append("value=\""+nt.getName()+"\"");
+								 %>
+								  <div class="mixinItem checkbox"><label for="<%=nt.getName() %>"><input class="checkbox" type="checkbox" name="./jcr:mixinTypes" <%=sb %> /><%=nt.getName() %></label></div>
+								 <% } %>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" id="mixinCancelBtn" data-dismiss="modal">Cancel</button>
+						<input type="submit" class="btn btn-primary" id="mixinSubmitBtn" value="Submit" />
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+	</form>
+<!-- /.modal -->
+
+	
 	<div class="screenLock"></div>
+	<script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
 	<script src="${staticRoot}/edit/properties.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

@@ -11,16 +11,19 @@ jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
     return this;
 };
 
+function toggleLock() {
+	if (window.parent && window.parent.document) {
+		$( window.parent.document).find('body').toggleClass('lock');
+	}
+	$('body').toggleClass('lock');
+}
+
 /* End extend */
 var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
 $('tr.alert:not(.readonly)').on('dblclick', function() {
 	var _self = $(this);
 	_self.toggleClass('editing');
-	if (window.parent && window.parent.document) {
-		$( window.parent.document).find('body').toggleClass('lock');
-	}
-	$('body').toggleClass('lock');
-	
+
 	if (!_self.data('renderForm')) {
 		_self.data('renderForm',true);
 		createEditPanel(_self);
@@ -189,6 +192,12 @@ function createEditPanel(trElement) {
 		 $("#dialog-edit").dialog('open');
 	}
 	
-
+	$('#mixinBtn').on('click', function() {
+		toggleLock();
+	   $('#mixinModal').modal('show');
+	})
 	
+	$('#mixinCancelBtn').on('click', function() {
+		toggleLock();
+	});
 
