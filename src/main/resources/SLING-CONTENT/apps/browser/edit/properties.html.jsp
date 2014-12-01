@@ -125,6 +125,7 @@ body.lock .value-edit {
 .fieldItem {
 	position:relative;
 	float:left;
+	padding:3px;
 }
 
 .fieldItem.single {
@@ -139,6 +140,11 @@ body.lock .value-edit {
 
 .fieldItem .glyphicon-remove-circle {
 	left:-18px;
+}
+
+.value-edit .glyphicon-plus {
+	float: left;
+	top: 10px;
 }
 
 .clear {
@@ -225,6 +231,6 @@ body.lock .value-edit {
 		</form>
 	</div>
 	<div class="screenLock"></div>
-	<script src="${staticRoot}/edit/properties.js" type="text/javascript" charset="utf-8"></script>
+	<script src="${staticRoot}/edit/properties.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

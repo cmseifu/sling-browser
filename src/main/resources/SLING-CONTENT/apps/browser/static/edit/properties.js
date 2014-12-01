@@ -13,7 +13,7 @@ jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
 
 /* End extend */
 var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
-$('tr:not(.readonly)').on('dblclick', function() {
+$('tr.alert:not(.readonly)').on('dblclick', function() {
 	var _self = $(this);
 	_self.toggleClass('editing');
 	if (window.parent && window.parent.document) {
@@ -32,58 +32,62 @@ $('tr:not(.readonly)').on('dblclick', function() {
 	}
 })
 // JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
+
+function createFormElementByType(name, type, value, isMultiple) {
+	var out = [];
+	out.push('<div class="fieldItem'+(!isMultiple ? ' single':'')+'">')
+	if (type == 'Boolean') {
+		/* Because checkbox is not submitted, we need to provide default value */
+		out.push('<input type="checkbox" name="'+name+'" onclick="this.value=this.checked?true:false" value="'+value+'" '+(value=='true' ? 'checked="checked"': '')+' />');
+		out.push('<input type="hidden" name="'+name+'@DefaultValue" value="false"/>');
+		out.push('<input type="hidden" name="'+name+'@UseDefaultWhenMissing" value="true"/>');
+	} else if (type == 'Long'){
+		out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+value+'" />');
+	} else if (type == 'Double') {
+		out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" />');
+	} else if (type == 'String') {
+		if (isMultiple) {
+			out.push('<input type="text" name="'+name+'" value="'+value+'" />');
+		} else {
+			out.push('<textarea name="'+name+'">'+value+'</textarea>');
+		}
+	} else if (type == 'Reference') {
+		//TODO
+	} else if (type == 'Date') {
+		//TODO
+	} else if (type == 'Name') {
+		//TODO
+	} else if (type == 'Path') {
+		//TODO
+	} else if (type == 'Undefined') {
+		//TODO
+	} 
+	if (isMultiple) {
+		out.push('<span class="glyphicon glyphicon-remove-circle" data-action="remove-prop"></span>')
+	}
+	out.push('</div>');
+	return out.join('');
+}
 function createEditPanel(trElement) {
 	var name = trElement.data('name');
 	var type = trElement.data('type');
 	var isMultiple =  trElement.data('multiple')
 	var valueEdit = trElement.find('.value-edit');
-	var propertyForm = propertyFormTmpl.clone();
 	var out = [];
 	
-	/* $( ":checkbox" )
-  .map(function() {
-    return this.id;
-  })
-  .get()
-  .join(); */
-	valueEdit.find('span').each(function () {
-		var val = $(this).text();
-		out.push('<div class="fieldItem'+(!isMultiple ? ' single':'')+'">')
-		if (type == 'Boolean') {
-			/* Because checkbox is not submitted, we need to provide default value */
-			out.push('<input type="checkbox" name="'+name+'" onclick="this.value=this.checked?true:false" value="'+val+'" '+(val=='true' ? 'checked="checked"': '')+' />');
-			out.push('<input type="hidden" name="'+name+'@DefaultValue" value="false"/>');
-			out.push('<input type="hidden" name="'+name+'@UseDefaultWhenMissing" value="true"/>');
-		} else if (type == 'Reference') {
-			//TODO
-		} else if (type == 'Date') {
-			//TODO
-		} else if (type == 'Name') {
-			//TODO
-		} else if (type == 'Long'){
-			out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+val+'" />');
-		} else if (type == 'Double') {
-			out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+val+'" />');
-		} else if (type == 'String') {
-			if (isMultiple) {
-				out.push('<input type="text" name="'+name+'" value="'+val+'" />');
-			} else {
-				out.push('<textarea name="'+name+'">'+val+'</textarea>');
-			}
-		}
-		else {
-			
-		}
-		if (isMultiple) {
-			out.push('<span class="glyphicon glyphicon-remove-circle" data-action="remove-prop"></span>')
-		}
-		out.push('</div>')
-	});
+	var originalValues =  valueEdit.find('span').map(function() { return $(this).text(); }).get();
+	for (var i=0,j=originalValues.length;i<j;i++) {
+		out.push(createFormElementByType(name, type, originalValues[i], isMultiple));
+	}
+
 	if (isMultiple) {
 		out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
 	}
 	
+	valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
+	
 	valueEdit.on('click', function(e) {
+		var _tr = $(this).closest('tr');
 		if (e.target.nodeName == 'SPAN') {
 			e.preventDefault();
 			var $target = $(e.target);
@@ -92,6 +96,9 @@ function createEditPanel(trElement) {
 				$target.closest('tr').trigger('dblclick');
 			} else if (action == 'remove-prop') {
 				$target.parent().remove();
+			} else if (action == 'add-prop') {
+				console.log(createFormElementByType(_tr.data('name'), _tr.data('type'), '', true));
+				$(createFormElementByType(_tr.data('name'), _tr.data('type'), '', true)).insertBefore($target);
 			}  
 			
 			else if (action == 'ok') {
@@ -132,7 +139,7 @@ function createEditPanel(trElement) {
 			}
 		} 
 	})
- 	valueEdit.empty().append(propertyForm.prepend(out.join('')));
+ 	
 }
 
 	function openEdit(event) {
