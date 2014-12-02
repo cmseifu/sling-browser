@@ -23,7 +23,7 @@ var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
 $('tr.alert:not(.readonly)').on('dblclick', function() {
 	var _self = $(this);
 	_self.toggleClass('editing');
-
+	toggleLock();
 	if (!_self.data('renderForm')) {
 		_self.data('renderForm',true);
 		createEditPanel(_self);
@@ -82,13 +82,10 @@ function createEditPanel(trElement) {
 	for (var i=0,j=originalValues.length;i<j;i++) {
 		out.push(createFormElementByType(name, type, originalValues[i], isMultiple));
 	}
-
 	if (isMultiple) {
 		out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
 	}
-	
 	valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
-	
 	valueEdit.on('click', function(e) {
 		var _tr = $(this).closest('tr');
 		if (e.target.nodeName == 'SPAN') {
@@ -192,12 +189,44 @@ function createEditPanel(trElement) {
 		 $("#dialog-edit").dialog('open');
 	}
 	
-	$('#mixinBtn').on('click', function() {
+	$('#mixinBtn').on('click', function(e) {
+		e.preventDefault();
+		$('.mixinContainer').toggleClass('editing');
 		toggleLock();
-	   $('#mixinModal').modal('show');
 	})
 	
 	$('#mixinCancelBtn').on('click', function() {
+		$('.mixinContainer').toggleClass('editing');
 		toggleLock();
+	});
+	
+	$('#mixinSubmitBtn').on('click', function() {
+		var $form = $('#mixinForm');
+		$('#mixinErrorMsg').empty().hide();
+		$.post($form.attr('action'), $form.serialize())
+		.done(function(data) {
+			var dataHtml = $(data);
+			var status = dataHtml.find('#Status').text();
+			var message = dataHtml.find('#Message').text();
+			if (status == '200' && message == 'OK') {
+				toggleLock();
+				window.location.reload(true);
+			}
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			var dataHtml = $(jqXHR.responseText);
+			var status = dataHtml.find('#Status').text();
+			var message = dataHtml.find('#Message').text();
+			
+			$('#mixinErrorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+			$('#mixinSubmitBtn').shake(5,5,800);
+		})
+		
+	});
+	
+	$(document).on('keyup', function(e) {
+		  if (e.keyCode === 27 && $('body.lock').length) { 
+			  $('.editing').toggleClass('editing');
+			  toggleLock();
+		  } 
 	});
 

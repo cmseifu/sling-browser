@@ -39,6 +39,7 @@
 	border-radius: 4px 4px 0 0;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+	z-index:1;
  }
  
  .readonly {
@@ -154,9 +155,89 @@ body.lock .value-edit {
 	clear:both;
 }
 
-.mixinItem {
-	
+.mixinContainer {
+	position: fixed;
+	top: -500px;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	background: rgba(255, 255, 255, 0.9);
+	overflow-y: hidden;
+	overflow-x: hidden;
+	line-height:normal;
+	letter-spacing:normal;
+	transition:opacity 0.3s;
+	width: 100%;
+	height: 0%;
+	transition:top 0.3s ease-in-out, height 0.1s ease-in-out;
+	-webkit-transition:top 0.3s ease-in-out, height 0.1s ease-in-out;
 }
+
+body.lock .mixinContainer.editing {
+	z-index: 101;
+	top:0px;
+	height:100%;
+}
+
+.mixinItem {
+	padding: 3px;
+	width: 250px;
+	float:left;
+	clear:right;
+	white-space:nowrap;
+}
+.mixinItem>div {
+	float: left;
+	display:inline-block;
+}
+/* .browser-checkbox */
+.browser-checkbox {
+	width: 20px;
+	position: relative;
+	margin-right: 5px;
+}
+
+.browser-checkbox label {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #fcfff4;
+	border: 1px solid #999;
+}
+
+.browser-checkbox label:after {
+	content: '';
+	width: 9px;
+	height: 5px;
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	border: 3px solid #333;
+	border-top: none;
+	border-right: none;
+	background: transparent;
+	opacity: 0;
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	-webkit-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}
+
+.browser-checkbox label:hover::after {
+	opacity: 0.3;
+}
+
+.browser-checkbox input[type=checkbox] {
+	visibility: hidden;
+}
+
+.browser-checkbox input[type=checkbox]:checked+label::after {
+	opacity: 1;
+}
+
 
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
@@ -242,50 +323,49 @@ body.lock .value-edit {
 			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
 		</form>
 	</div>
-	<form  method="post" action="${resource.path}" enctype="multipart/form-data">
-		<div id="mixinModal" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title">Mixin Types</h4>
-					</div>
-					<div class="modal-body">
-						<div>
-							<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
-							
-								 <% 
-								 	NodeType primaryType = currentNode.getPrimaryNodeType();
-								    NodeType[] mixins = currentNode.getMixinNodeTypes();
-								 	while(nodeTypes.hasNext()) { 
-										NodeType nt = nodeTypes.nextNodeType();
-										StringBuilder sb = new StringBuilder();
-										if ( primaryType.equals(nt)) {
-											sb.append("disabled ");
-										} 
-										if ( ArrayUtils.contains(mixins, nt)) {
-											sb.append("checked ");
-										}
-										sb.append("value=\""+nt.getName()+"\"");
-								 %>
-								  <div class="mixinItem checkbox"><label for="<%=nt.getName() %>"><input class="checkbox" type="checkbox" name="./jcr:mixinTypes" <%=sb %> /><%=nt.getName() %></label></div>
-								 <% } %>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" id="mixinCancelBtn" data-dismiss="modal">Cancel</button>
-						<input type="submit" class="btn btn-primary" id="mixinSubmitBtn" value="Submit" />
-					</div>
-				</div>
+	<form method="post" id="mixinForm" action="${resource.path}" enctype="multipart/form-data">
+			<div class="mixinContainer">
+			<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
+				 <% 
+				 	NodeType primaryType = currentNode.getPrimaryNodeType();
+				    NodeType[] mixins = currentNode.getMixinNodeTypes();
+				 	while(nodeTypes.hasNext()) { 
+						NodeType nt = nodeTypes.nextNodeType();
+						StringBuilder sb = new StringBuilder();
+						if ( primaryType.equals(nt)) {
+							sb.append("disabled ");
+						} 
+						if ( ArrayUtils.contains(mixins, nt)) {
+							sb.append("checked ");
+						}
+						sb.append("value=\""+nt.getName()+"\"");
+				 %>
+				 <div class="mixinItem">
+				 	<div class="browser-checkbox">
+				 		<input type="checkbox" name="./jcr:mixinTypes" id="prop-<%=nt.getName() %>" <%=sb %> /> 
+				  	 	<label for="prop-<%=nt.getName() %>"></label>
+				 	</div>
+					<div><%=nt.getName() %></div>
+				 </div>
+				 <% } %>
+				<input type="hidden" name="./jcr:mixinTypes@Delete" value="" />
+				<div class="clear"></div>
+				<hr />
+				<div class="alert alert-danger" style="display:none" id="mixinErrorMsg"></div>
+				<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
+				<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
+	</div>
 				<!-- /.modal-content -->
-			</div>
-			<!-- /.modal-dialog -->
-		</div>
+			
 	</form>
 <!-- /.modal -->
 
 	
 	<div class="screenLock"></div>
 	<script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+	<script>
+		resourcePath = "${resource.path}";
+	</script>
 	<script src="${staticRoot}/edit/properties.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
