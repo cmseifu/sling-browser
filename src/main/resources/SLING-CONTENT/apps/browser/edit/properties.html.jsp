@@ -256,6 +256,57 @@ body.lock .mixinContainer.editing {
 	width:30%;
 }
 
+#propMultiple {
+	z-index:101;
+}
+
+#propMultiple:before {
+	content: "";
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-bottom: 10px solid #ffcb66;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
+	opacity: 0;
+	visibility:hidden;
+	top: 20px;
+	right: 5px;
+}
+
+#propMultiple:after {
+	content: attr(data-title);
+	font-size: 12px;
+	text-align: center;
+	position: absolute;
+	z-index: 102;
+	top: 5px;
+	border: 1px solid #999;
+	width: 80px;
+	left: -70px;
+	background: #eee;
+	padding: 5px;
+	color: black;  
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	opacity: 0;
+	visibility:hidden;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
+}
+
+
+
+#propMultiple:hover:after, #propMultiple:hover:before {
+	visibility:visible;
+	opacity: 1;
+}
+
 
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
@@ -269,7 +320,7 @@ body.lock .mixinContainer.editing {
     
 		  <div class="input-group" role="group" aria-label="..."> 
 		  		<span class="input-group-addon">
-        			<input title="Multiple" type="checkbox" id="propMultiple"  />
+        			<input data-title="multi value" type="checkbox" id="propMultiple"  />
       			</span>
 		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" />
 		  	 	<div class="input-group-btn">
