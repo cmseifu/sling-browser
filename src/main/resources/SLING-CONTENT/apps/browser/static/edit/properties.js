@@ -10,6 +10,7 @@ jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
   });
     return this;
 };
+/* End extend */
 
 function toggleLock() {
 	if (window.parent && window.parent.document) {
@@ -18,7 +19,19 @@ function toggleLock() {
 	$('body').toggleClass('lock');
 }
 
-/* End extend */
+function removePropertyHandler(e) {
+	var _tr = $(this).closest('tr');
+	var propStr = encodeURIComponent(_tr.data('name'))+'@Delete=';
+	
+	$.post(resourcePath+"?"+propStr).done(function(data){
+		_tr.fadeOut(800, function() { _tr.remove(); })
+	}).fail(function() {
+		_tr.shake(5,5,800);
+	});
+}
+
+$('.glyphicon-trash').on('click', removePropertyHandler);
+
 var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
 $('tr.alert:not(.readonly)').on('dblclick', function() {
 	var _self = $(this);
@@ -50,9 +63,9 @@ function createFormElementByType(name, type, value, isMultiple) {
 		out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" />');
 	} else if (type == 'String') {
 		if (isMultiple) {
-			out.push('<input type="text" name="'+name+'" value="'+value+'" />');
+			out.push('<input type="text" required name="'+name+'" value="'+value+'" />');
 		} else {
-			out.push('<textarea name="'+name+'">'+value+'</textarea>');
+			out.push('<textarea required name="'+name+'">'+value+'</textarea>');
 		}
 	} else if (type == 'Reference') {
 		//TODO
@@ -87,29 +100,28 @@ function createEditPanel(trElement) {
 	}
 	valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
 	valueEdit.on('click', function(e) {
-		var _tr = $(this).closest('tr');
+		var _propRoot = $(this).closest('tr');
 		if (e.target.nodeName == 'SPAN') {
 			e.preventDefault();
+			e.stopPropagation();
 			var $target = $(e.target);
 			action = $target.data('action');
+			if (!action) return;
 			if (action == 'cancel') {
 				$target.closest('tr').trigger('dblclick');
 			} else if (action == 'remove-prop') {
 				$target.parent().remove();
 			} else if (action == 'add-prop') {
-				console.log(createFormElementByType(_tr.data('name'), _tr.data('type'), '', true));
-				$(createFormElementByType(_tr.data('name'), _tr.data('type'), '', true)).insertBefore($target);
+				$(createFormElementByType(_propRoot.data('name'), _propRoot.data('type'), '', true)).insertBefore($target);
 			}  
 			
 			else if (action == 'ok') {
 				var $form = $target.closest('form');
 				var isValid = true;
-				var fields = $form.find('input[pattern]');
-				/* Html5 supported */
-				if (fields.length && typeof fields[0].willValidate !== 'undefined') {
+				var fields = $form.find('[required]');
+				if (fields.length) {
 					fields.each(function() {
-						this.checkValidity();
-						if (!this.validity.valid) {
+						if (!isValidField(this)) {
 							isValid = false;
 							return;
 						}
@@ -141,33 +153,8 @@ function createEditPanel(trElement) {
 	})
  	
 }
-
-	function openEdit(event) {
-		event.preventDefault();
-		var field = $(this).attr('data-field');
-		var fieldValue = dataJson[field];
-		var fieldSet = $("#dialog-edit fieldset")
-		fieldSet.empty();
-		$("#dialog-edit").dialog('option','title','FIELD: '+field);
-		if (fieldValue instanceof Array) {
-			for (var i in fieldValue) {
-				$('<input type="text" />').attr('name',field).attr('value',fieldValue[i]).appendTo(fieldSet);
-			}
-			fieldSet.children().each(function() {	
-		$(this).css({'border-width': '0px', 'outline': 'none', 'border-spacing':'5px'})
-			.wrap('<div class="divclearable"></div>')
-			.parent()
-			.attr('class', $(this).attr('class') + ' divclearable')
-			.append('<a class="clearlink" href="#"></a>');
-	
-		$('.clearlink')
-			.attr('title', 'Click to clear this textbox')
-			.click(function(event) {
-				event.preventDefault();
-				$(this).parent().remove();
-			});
-		  });
-		} else if (fieldValue.indexOf('<') > -1) {
+/*
+		if (fieldValue.indexOf('<') > -1) {
 			var textarea  = $('<textarea></textarea>').attr('name',field).attr('value',fieldValue).appendTo(fieldSet);
 			textarea.wysiwyg({
 			rmUnusedControls: true,
@@ -182,13 +169,8 @@ function createEditPanel(trElement) {
 				removeFormat: { visible : true }
 			}
 		});
-		} else {
-			$('<input type="text"/>').attr('name',field).attr('value',fieldValue).appendTo(fieldSet);
-		}
+*/
 		
-		 $("#dialog-edit").dialog('open');
-	}
-	
 	$('#mixinBtn').on('click', function(e) {
 		e.preventDefault();
 		$('.mixinContainer').toggleClass('editing');
@@ -200,9 +182,15 @@ function createEditPanel(trElement) {
 		toggleLock();
 	});
 	
+	$('#propCancelBtn').on('click', function() {
+		$('#addPropModal').modal('hide');
+		toggleLock();
+	});
+	
 	$('#mixinSubmitBtn').on('click', function() {
 		var $form = $('#mixinForm');
-		$('#mixinErrorMsg').empty().hide();
+		var $errorMsg = $form.find('.errorMsg');
+		$errorMsg.empty().hide();
 		$.post($form.attr('action'), $form.serialize())
 		.done(function(data) {
 			var dataHtml = $(data);
@@ -217,7 +205,7 @@ function createEditPanel(trElement) {
 			var status = dataHtml.find('#Status').text();
 			var message = dataHtml.find('#Message').text();
 			
-			$('#mixinErrorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+			$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
 			$('#mixinSubmitBtn').shake(5,5,800);
 		})
 		
@@ -228,5 +216,99 @@ function createEditPanel(trElement) {
 			  $('.editing').toggleClass('editing');
 			  toggleLock();
 		  } 
+	});
+	
+	function isValidField(field) {
+		if (typeof field.willValidate !== "undefined") {
+			field.checkValidity();
+			return field.validity.valid;
+		}
+		// Legacy browser, will let server handle the validation so returning true
+		return true;
+	}
+	
+	function addPropMenuitemHandler(e) {
+		e.preventDefault();
+		var propName = $('#propName');
+		if (!isValidField(propName[0])) {
+			propName.shake(5,5,800);
+			return;
+		}
+		var name = propName.val();
+		var isMultiple = $('#propMultiple:checked').length > 0;
+		var type = $(this).text();
+		var addPropModal = $('#addPropModal');
+		
+		var out = [];
+		out.push('<input type="hidden" name="'+name+'@TypeHint" value="'+type+(isMultiple?'[]':'')+'" />');
+		out.push(createFormElementByType(name, type, '', isMultiple));
+		if (isMultiple) {
+			out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
+		}
+		
+		addPropModal.removeData().data({name:name, type:type, multiple:isMultiple});
+		addPropModal.find('.modal-title').text(type+(isMultiple?'[]':'')+': '+propName.val());
+		addPropModal.find('.modal-body').empty().append(out.join(''));
+		addPropModal.modal('show');
+		toggleLock();
+	}
+	
+	$('#addPropMenu .dropdown-menu a').on('click', addPropMenuitemHandler);
+	
+	$('#addPropModal .modal-content').on('click', function(e) {
+		if (e.target && e.target.nodeName == 'SPAN') {
+			e.preventDefault();
+			e.stopPropagation();
+			var $target = $(e.target);
+			action = $target.data('action');
+			if (!action) return false;
+			var _propRoot = $('#addPropModal');
+			_propRoot.find('.fieldItem.alert').removeClass('alert alert-danger')
+			if (action == 'add-prop') {
+				$(createFormElementByType(_propRoot.data('name'), _propRoot.data('type'), '', true)).insertBefore($target);
+			}  
+			else if (action == 'remove-prop') {
+				$target.parent().remove();
+			} 
+			else if (action == 'ok') {
+				var $form = $target.closest('form');
+				var isValid = true;
+				var invaldField = null;
+				var fields = $form.find('[required]');
+				if (fields.length) {
+					fields.each(function() {
+						if (!isValidField(this)) {
+							isValid = false;
+							invalidField = this;
+							return false;
+						}
+					})
+				}
+				var $errorMsg = $form.find('.errorMsg');
+				$errorMsg.empty().hide();
+				if (!isValid) {
+					$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
+					$errorMsg.text("Entry is invalid!").show();
+				} else {
+					$.post($form.attr('action'), $form.serialize())
+					.done(function(data) {
+						var dataHtml = $(data);
+						var status = dataHtml.find('#Status').text();
+						var message = dataHtml.find('#Message').text();
+						if (status == '200' && message == 'OK') {
+							toggleLock();
+							window.location.reload(true);
+						}
+					}).fail(function(jqXHR, textStatus, errorThrown) {
+						var dataHtml = $(jqXHR.responseText);
+						var status = dataHtml.find('#Status').text();
+						var message = dataHtml.find('#Message').text();
+						
+						$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+					})
+				}
+				
+			}
+		}
 	});
 

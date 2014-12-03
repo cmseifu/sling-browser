@@ -46,15 +46,6 @@
  	opacity:0.6;
  }
  
- .value-edit {
- 	display:none;
- }
- 
- .value-edit textarea {
- 	width: 95%;
-	resize: vertical;
- }
- 
  .editing {
  	-webkit-user-select:none;
  	user-select:none;
@@ -107,16 +98,36 @@ body.lock .value-edit {
 	color:green;
 }
 
-.value-edit:before {
-	content: attr(title);
-	display: inline-block;
-	font-weight:bold;
-	font-size:1.1em;
-	color: #476C8A;
+.fieldItem {
+	position:relative;
+	padding:3px;
+}
+
+.fieldItem .glyphicon-remove-circle {
+	left:-18px;
+}
+
+.fieldItem.single {
+	width:100%;
+}
+
+.fieldItem textarea {
+ 	width: 95%;
+	resize: vertical;
+ }
+ 
+.fieldItem.single {
+	width:100%;
+}
+
+.value-edit .fieldItem input[type=text] {
+	border:1px solid #999;
+	padding:3px;
 }
 
 
 .value-edit {
+	display:none;
 	background-color: rgba(255, 255, 255, 0.90);
 	border: 1px solid #999;
 	box-shadow: 3px 5px 20px 2px #ddd;
@@ -126,30 +137,28 @@ body.lock .value-edit {
 	width:100%;
 }
 
-.fieldItem {
-	position:relative;
+
+
+.value-edit:before {
+	content: attr(title);
+	display: inline-block;
+	font-weight:bold;
+	font-size:1.1em;
+	color: #476C8A;
+}
+
+
+.value-edit .fieldItem {
 	float:left;
-	padding:3px;
 }
 
-.fieldItem.single {
-	width:100%;
-}
 
-.fieldItem input[type=text] {
-	border:1px solid #999;
-	padding:3px;
-	
-}
-
-.fieldItem .glyphicon-remove-circle {
-	left:-18px;
-}
 
 .value-edit .glyphicon-plus {
 	float: left;
 	top: 10px;
 }
+
 
 .clear {
 	clear:both;
@@ -238,17 +247,51 @@ body.lock .mixinContainer.editing {
 	opacity: 1;
 }
 
+.btn-group {
+	float:left;
+	padding-right:10px;
+}
+
+.input-group {
+	width:30%;
+}
+
 
  </style>
   <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
 <body>
 	<div class="container">
-		<div class="btn-toolbar" role="toolbar" aria-label="...">
 		  <div class="btn-group" role="group" aria-label="..."> 
 		  	<button type="button" class="btn btn-default" id="mixinBtn">Mixins</button>
 		  </div>
-		</div>
+		 
+    
+		  <div class="input-group" role="group" aria-label="..."> 
+		  		<span class="input-group-addon">
+        			<input title="Multiple" type="checkbox" id="propMultiple"  />
+      			</span>
+		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" />
+		  	 	<div class="input-group-btn">
+			  	  <div class="dropdown" id="addPropMenu">
+				  	<button class="btn btn-default dropdown-toggle" type="button" id="addPropMenuDropdown" data-toggle="dropdown" aria-expanded="true">
+				    	As <span class="caret"></span>
+				  	</button>
+				  	 <ul class="dropdown-menu" role="menu" aria-labelledby="addPropMenuDropdown">
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">String</a></li>
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Double</a></li>
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Long</a></li>
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Date</a></li>
+					    <%--
+					   	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Name</a></li>
+					   	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Path</a></li>
+					   	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Reference</a></li>
+					    --%>
+					  </ul>
+					</div>
+			  	</div>
+		  </div>
+		
 		<table class="table table-condensed">
 			<tbody>
 				<thead>
@@ -323,42 +366,60 @@ body.lock .mixinContainer.editing {
 			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
 		</form>
 	</div>
+	
 	<form method="post" id="mixinForm" action="${resource.path}" enctype="multipart/form-data">
-			<div class="mixinContainer">
-			<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
-				 <% 
-				 	NodeType primaryType = currentNode.getPrimaryNodeType();
-				    NodeType[] mixins = currentNode.getMixinNodeTypes();
-				 	while(nodeTypes.hasNext()) { 
-						NodeType nt = nodeTypes.nextNodeType();
-						StringBuilder sb = new StringBuilder();
-						if ( primaryType.equals(nt)) {
-							sb.append("disabled ");
-						} 
-						if ( ArrayUtils.contains(mixins, nt)) {
-							sb.append("checked ");
-						}
-						sb.append("value=\""+nt.getName()+"\"");
-				 %>
-				 <div class="mixinItem">
-				 	<div class="browser-checkbox">
-				 		<input type="checkbox" name="./jcr:mixinTypes" id="prop-<%=nt.getName() %>" <%=sb %> /> 
-				  	 	<label for="prop-<%=nt.getName() %>"></label>
-				 	</div>
-					<div><%=nt.getName() %></div>
-				 </div>
-				 <% } %>
-				<input type="hidden" name="./jcr:mixinTypes@Delete" value="" />
-				<div class="clear"></div>
-				<hr />
-				<div class="alert alert-danger" style="display:none" id="mixinErrorMsg"></div>
-				<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
-				<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
+		<div class="mixinContainer">
+		<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
+			 <% 
+			 	NodeType primaryType = currentNode.getPrimaryNodeType();
+			    NodeType[] mixins = currentNode.getMixinNodeTypes();
+			 	while(nodeTypes.hasNext()) { 
+					NodeType nt = nodeTypes.nextNodeType();
+					StringBuilder sb = new StringBuilder();
+					if ( primaryType.equals(nt)) {
+						sb.append("disabled ");
+					} 
+					if ( ArrayUtils.contains(mixins, nt)) {
+						sb.append("checked ");
+					}
+					sb.append("value=\""+nt.getName()+"\"");
+			 %>
+			 <div class="mixinItem">
+			 	<div class="browser-checkbox">
+			 		<input type="checkbox" name="./jcr:mixinTypes" id="prop-<%=nt.getName() %>" <%=sb %> /> 
+			  	 	<label for="prop-<%=nt.getName() %>"></label>
+			 	</div>
+				<div><%=nt.getName() %></div>
+			 </div>
+			 <% } %>
+			<input type="hidden" name="./jcr:mixinTypes@Delete" value="" />
+			<div class="clear"></div>
+			<hr />
+			<div class="alert alert-danger errorMsg" style="display:none"></div>
+			<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
+			<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
 	</div>
-				<!-- /.modal-content -->
-			
 	</form>
-<!-- /.modal -->
+
+	<form method="post" action="${resource.path}" enctype="multipart/form-data">
+	<div id="addPropModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+					
+				</div>
+				<div class="modal-footer">
+					<div class="alert alert-danger errorMsg" style="display:none"></div>
+					<button type="button" class="btn btn-default" id="propCancelBtn">Cancel</button>
+					<button type="button" class="btn btn-primary" id="confirmAddPropBtn"><span  data-action="ok">Submit</span></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
 
 	
 	<div class="screenLock"></div>
