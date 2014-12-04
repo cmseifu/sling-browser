@@ -32,7 +32,6 @@ nav {
 	float:right;
 }
 </style>
- <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
 <body>
 	<nav>
@@ -41,7 +40,39 @@ nav {
 			<div class="themeSelect">
 				<small>Theme: </small>
 				<select id="aceThemeSelect">
-
+					<option>ambiance</option>
+					<option>chaos</option>
+					<option>chrome</option>
+					<option>clouds_midnight</option>
+					<option>clouds</option>
+					<option>cobalt</option>
+					<option>crimson_editor</option>
+					<option>dawn</option>
+					<option>dreamweaver</option>
+					<option>eclipse</option>
+					<option>github</option>
+					<option>idle_fingers</option>
+					<option>katzenmilch</option>
+					<option>kr_theme</option>
+					<option>kr</option>
+					<option>kuroir</option>
+					<option>merbivore_soft</option>
+					<option>merbivore</option>
+					<option>mono_industrial</option>
+					<option>monokai</option>
+					<option>pastel_on_dark</option>
+					<option>solarized_dark</option>
+					<option>solarized_light</option>
+					<option>terminal</option>
+					<option>textmate</option>
+					<option>tomorrow_night_blue</option>
+					<option>tomorrow_night_bright</option>
+					<option>tomorrow_night_eighties</option>
+					<option>tomorrow_night</option>
+					<option>tomorrow</option>
+					<option>twilight</option>
+					<option>vibrant_ink</option>
+					<option>xcode</option>
 				</select>
 			</div>
 		</form>
@@ -57,6 +88,7 @@ nav {
 	<script>
 		var aceMode = "ace/mode/${param.fileType}";
 	</script>
+	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script src="${staticRoot}/ace-1.1.7/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script src="${staticRoot}/edit/file.js" type="text/javascript" charset="utf-8"></script>
 </body>
