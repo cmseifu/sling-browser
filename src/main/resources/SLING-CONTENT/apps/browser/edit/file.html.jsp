@@ -90,7 +90,8 @@ nav {
 	</script>
 	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script src="${staticRoot}/ace-1.1.7/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script src="${staticRoot}/edit/file.js" type="text/javascript" charset="utf-8"></script>
+	<script src="${staticRoot}/common.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
+	<script src="${staticRoot}/edit/file.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
 

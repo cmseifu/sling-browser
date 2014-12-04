@@ -1,5 +1,6 @@
 // Editor.js
 (function() {
+	var SESSION_KEY = 'browser-file';
 	var editor = ace.edit("editor");
 	var saveBtn = $('#saveBtn');
 	// parent file should set the aceMode variable
@@ -10,7 +11,9 @@
 	});
 	
 	$('#aceThemeSelect').on('change',function () {
-		editor.setTheme("ace/theme/"+$(this).val());
+		var theme = $(this).val();
+		editor.setTheme("ace/theme/"+theme);
+		setLocalStorage(SESSION_KEY, {theme:theme});
 	})
 	saveBtn.on('click', function(e) {
 		this.disabled=true;
@@ -18,4 +21,9 @@
 		$('#updateForm').submit();
 	});
 	$('#editor').css('opacity',1);
+	
+	var storage = getJsonLocalStorage(SESSION_KEY);
+	if (storage && storage.theme) {
+		$('#aceThemeSelect').val(storage.theme).trigger('change');
+	}
 })()
