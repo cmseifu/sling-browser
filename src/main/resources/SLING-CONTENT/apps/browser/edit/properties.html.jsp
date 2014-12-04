@@ -309,7 +309,6 @@ body.lock .mixinContainer.editing {
 
 
  </style>
-  <script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 </head>
 <body>
 	<div class="container">
@@ -465,7 +464,7 @@ body.lock .mixinContainer.editing {
 				<div class="modal-footer">
 					<div class="alert alert-danger errorMsg" style="display:none"></div>
 					<button type="button" class="btn btn-default" id="propCancelBtn">Cancel</button>
-					<button type="button" class="btn btn-primary" id="confirmAddPropBtn"><span  data-action="ok">Submit</span></button>
+					<span class="btn btn-primary" id="confirmAddPropBtn" data-action="ok">Submit</span>
 				</div>
 			</div>
 		</div>
@@ -474,6 +473,7 @@ body.lock .mixinContainer.editing {
 
 	
 	<div class="screenLock"></div>
+	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
 	<script>
 		resourcePath = "${resource.path}";

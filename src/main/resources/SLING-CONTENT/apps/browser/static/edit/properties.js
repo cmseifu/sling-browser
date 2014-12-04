@@ -20,6 +20,8 @@ function toggleLock() {
 }
 
 function removePropertyHandler(e) {
+	e.preventDefault();
+	e.stopPropagation();
 	var _tr = $(this).closest('tr');
 	var propStr = encodeURIComponent(_tr.data('name'))+'@Delete=';
 	
@@ -30,7 +32,7 @@ function removePropertyHandler(e) {
 	});
 }
 
-$('.glyphicon-trash').on('click', removePropertyHandler);
+$('.glyphicon-trash').one('click dblclick', removePropertyHandler);
 
 var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
 $('tr.alert:not(.readonly)').on('dblclick', function() {
@@ -191,6 +193,7 @@ function createEditPanel(trElement) {
 		var $form = $('#mixinForm');
 		var $errorMsg = $form.find('.errorMsg');
 		$errorMsg.empty().hide();
+		console.log($form.serialize());
 		$.post($form.attr('action'), $form.serialize())
 		.done(function(data) {
 			var dataHtml = $(data);
