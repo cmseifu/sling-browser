@@ -356,7 +356,6 @@ body.lock .mixinContainer.editing {
 						
 			<%
 				PropertyIterator properties = currentNode.getProperties();
-				
 				String resourceType = resource.getResourceType();
 				String path = currentNode.getPath();
 				if (properties != null) {
@@ -419,8 +418,8 @@ body.lock .mixinContainer.editing {
 	
 	<form method="post" id="mixinForm" action="${resource.path}" enctype="multipart/form-data">
 		<div class="mixinContainer">
-		<% NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); %>
-			 <% 
+			<% 		
+				NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getMixinNodeTypes(); 
 			 	NodeType primaryType = currentNode.getPrimaryNodeType();
 			    NodeType[] mixins = currentNode.getMixinNodeTypes();
 			 	while(nodeTypes.hasNext()) { 
