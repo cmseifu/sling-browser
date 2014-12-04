@@ -45,20 +45,12 @@ install from eclipse
 		<antcall target="mvn-install" />
 	</target>
 	
+	
 	<target name="upload-apps">
-		<zip destfile="${generated.dir}/${publication}-apps.zip" >
-			<zipfileset erroronmissingdir="false" dir="${src.dir}/resources/SLING-CONTENT/apps/${publication}" excludes="config/** **/.json **/.vlt **/*.svn/"/>
-		</zip>
-		<if>
-			<available file="${generated.dir}/${publication}-apps.zip" type="file"/>
-			<then>
-				<echo>Posting APP changes...</echo>
-				<exec executable="${curl}">
-					<arg line='-o "${devNull}" -s -F":operation=import" -F":contentType=zip"  -F":contentFile=@${generated.dir}/${publication}-apps.zip" http://${username}:${password}@${host}:${port}/apps/${publication}' />
-				</exec>
-				<echo>Done Posting!!!</echo>
-			</then>
-		</if>
+		<exec executable="${mvn}" dir="${basedir}">
+			<arg line="-P apps initialize -Dsling.user=admin -Dsling.password=${password} -Dsling.url=${host}:${port}" />
+		</exec>
+		
 	</target>
 	
 	
