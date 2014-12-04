@@ -14,7 +14,7 @@
 		try {
 			return JSON.parse(getLocalStorage(key));
 		} catch (e) {
-			console.log(key+" does not seem to have JSON format, try use getFromLocalStorage instead ("+e+")");
+			console.log(key+" does not seem to have JSON format, try use getLocalStorage instead ("+e+")");
 		}
 	}
 	
@@ -31,7 +31,7 @@
 		}
 	}
 	
-	/* Session Storage methods, persist only through out the life of the browse tab */
+	/* Session Storage methods, persist only through out the life of the browser tab */
    /* Use check if sessionStorage is supported */
 	function hasSessionStorage() {
 		return (typeof sessionStorage !== "undefined" && sessionStorage != null);
@@ -47,7 +47,7 @@
 		try {
 			return JSON.parse(getSessionStorage(key));
 		} catch (e) {
-			console.log(key+" does not seem to have JSON format, try use getFromSessionStorage instead ("+e+")");
+			console.log(key+" does not seem to have JSON format, try use getSessionStorage instead ("+e+")");
 		}
 		
 	}
