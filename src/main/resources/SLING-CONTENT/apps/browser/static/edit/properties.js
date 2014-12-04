@@ -12,6 +12,7 @@ jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
 };
 /* End extend */
 
+var SESSION_KEY = 'browser-property';
 function toggleLock() {
 	if (window.parent && window.parent.document) {
 		$( window.parent.document).find('body').toggleClass('lock');
@@ -60,12 +61,12 @@ function createFormElementByType(name, type, value, isMultiple) {
 		out.push('<input type="hidden" name="'+name+'@DefaultValue" value="false"/>');
 		out.push('<input type="hidden" name="'+name+'@UseDefaultWhenMissing" value="true"/>');
 	} else if (type == 'Long'){
-		out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+value+'" />');
+		out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
 	} else if (type == 'Double') {
-		out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" />');
+		out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
 	} else if (type == 'String') {
 		if (isMultiple) {
-			out.push('<input type="text" required name="'+name+'" value="'+value+'" />');
+			out.push('<input type="text" required name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
 		} else {
 			out.push('<textarea required name="'+name+'">'+value+'</textarea>');
 		}
@@ -144,7 +145,7 @@ function createEditPanel(trElement) {
 							} else {
 								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
 							}
-							valueEdit.closest('tr').trigger('dblclick').addClass('alert-success').fadeOut(500).fadeIn(1000,function() {$(this).removeClass('alert-success')});
+							visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
 						}
 					}).fail(function(jqXHR, textStatus, errorThrown) {
 						valueEdit.find('form').shake(5,5,800);
@@ -199,15 +200,16 @@ function createEditPanel(trElement) {
 			var dataHtml = $(data);
 			var status = dataHtml.find('#Status').text();
 			var message = dataHtml.find('#Message').text();
+			
 			if (status == '200' && message == 'OK') {
 				toggleLock();
+				setSessionStorage(SESSION_KEY, {highlight: ['jcr:mixinTypes']});
 				window.location.reload(true);
 			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			var dataHtml = $(jqXHR.responseText);
 			var status = dataHtml.find('#Status').text();
 			var message = dataHtml.find('#Message').text();
-			
 			$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
 			$('#mixinSubmitBtn').shake(5,5,800);
 		})
@@ -300,6 +302,7 @@ function createEditPanel(trElement) {
 						var message = dataHtml.find('#Message').text();
 						if (status == '200' && message == 'OK') {
 							toggleLock();
+							setSessionStorage(SESSION_KEY, {highlight: [$('#addPropModal').data('name')]});
 							window.location.reload(true);
 						}
 					}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -314,4 +317,19 @@ function createEditPanel(trElement) {
 			}
 		}
 	});
+	
+	function visualUpdate(ele) {
+		ele.addClass('alert-success').fadeOut(500).fadeIn(1000,function() {$(this).removeClass('alert-success')})
+	}
+	
+	function restoreSession() {
+		var storage = getJsonSessionStorage(SESSION_KEY);
+		if (storage && storage.highlight) {
+			for (var i=0;i<storage.highlight.length;i++) {
+				visualUpdate($('tr[data-name=\''+storage.highlight[i]+'\']'));
+			}
+			clearSessionStorage(SESSION_KEY);
+		}
+	}
+	restoreSession();
 

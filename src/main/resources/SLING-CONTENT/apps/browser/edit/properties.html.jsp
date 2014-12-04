@@ -101,14 +101,24 @@ body.lock .value-edit {
 .fieldItem {
 	position:relative;
 	padding:3px;
+	float:left;
+	clear:right;
+	vertical-align:middle;
+	margin-right: 5px;
+background-color: aliceblue;
 }
 
-.fieldItem .glyphicon-remove-circle {
-	left:-18px;
+.glyphicon-remove-circle {
+	padding-left:5px;
 }
+
 
 .fieldItem.single {
 	width:100%;
+}
+
+.fieldItem.single input{
+	width:95%;
 }
 
 .fieldItem textarea {
@@ -116,11 +126,7 @@ body.lock .value-edit {
 	resize: vertical;
  }
  
-.fieldItem.single {
-	width:100%;
-}
-
-.value-edit .fieldItem input[type=text] {
+.fieldItem input[type=text] {
 	border:1px solid #999;
 	padding:3px;
 }
@@ -145,18 +151,6 @@ body.lock .value-edit {
 	font-weight:bold;
 	font-size:1.1em;
 	color: #476C8A;
-}
-
-
-.value-edit .fieldItem {
-	float:left;
-}
-
-
-
-.value-edit .glyphicon-plus {
-	float: left;
-	top: 10px;
 }
 
 
@@ -307,6 +301,9 @@ body.lock .mixinContainer.editing {
 	opacity: 1;
 }
 
+.modal-body {
+	overflow-y: auto;
+}
 
  </style>
 </head>
@@ -329,6 +326,7 @@ body.lock .mixinContainer.editing {
 				  	</button>
 				  	 <ul class="dropdown-menu" role="menu" aria-labelledby="addPropMenuDropdown">
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">String</a></li>
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Boolean</a></li>
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Double</a></li>
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Long</a></li>
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Date</a></li>
@@ -477,6 +475,7 @@ body.lock .mixinContainer.editing {
 	<script>
 		resourcePath = "${resource.path}";
 	</script>
+	<script src="${staticRoot}/common.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 	<script src="${staticRoot}/edit/properties.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

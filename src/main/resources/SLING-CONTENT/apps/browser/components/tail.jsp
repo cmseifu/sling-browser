@@ -21,4 +21,5 @@
 	var suffix = "${empty slingRequest.requestPathInfo.suffix ? '/': slingRequest.requestPathInfo.suffix}";
 	
 </script>
+<script src="${staticRoot}/common.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="${staticRoot}/browser.js"></script>
