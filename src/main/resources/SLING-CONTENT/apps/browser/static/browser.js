@@ -1,3 +1,5 @@
+var SESSION_KEY = 'browser';
+
 $(document).ready(function() {
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
 		$("#loginModal").on('shown.bs.modal', function() {
@@ -56,7 +58,7 @@ $(document).ready(function() {
 		var fileOpenHandler = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
-			addTab($(this));
+			addTab($(this).data('node'));
 		}
 		
 		
@@ -299,8 +301,7 @@ $(document).ready(function() {
 			history.pushState(node.path, node.path, "/browser.html"+node.path);
 		}
 
-		function addTab(fileItem) {
-			var node = fileItem.data('node');
+		function addTab(node) {
 			var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 			if (!tab.length) {
 				if (node.fileType && node.fileType == 'js') {
@@ -347,42 +348,9 @@ $(document).ready(function() {
 			}
 		};
 		
-		/*
-		var lastsel2;
-		jQuery("#propertiesTable").jqGrid({
-			datatype: "local",
-			height: 250,
-		   	colNames:['ID Number','Name', 'Stock', 'Ship via','Notes'],
-		   	colModel:[
-		   		{name:'id',index:'id', width:90, sorttype:"int", editable: true},
-		   		{name:'name',index:'name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
-		   		{name:'stock',index:'stock', width:60, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"}},
-		   		{name:'ship',index:'ship', width:90, editable: true,edittype:"select",editoptions:{value:"FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX"}},		
-		   		{name:'note',index:'note', width:200, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}}		
-		   	],
-			onSelectRow: function(id){
-				if(id && id!==lastsel2){
-					jQuery('#propertiesTable').jqGrid('restoreRow',lastsel2);
-					jQuery('#propertiesTable').jqGrid('editRow',id,true);
-					lastsel2=id;
-				}
-			},
-			editurl: "server.php",
-			caption: "Input Types"
-		});
-		var mydata2 = [
-				{id:"12345",name:"Desktop Computer",note:"note",stock:"Yes",ship:"FedEx"},
-				{id:"23456",name:"Laptop",note:"Long text ",stock:"Yes",ship:"InTime"},
-				{id:"34567",name:"LCD Monitor",note:"note3",stock:"Yes",ship:"TNT"},
-				{id:"45678",name:"Speakers",note:"note",stock:"No",ship:"ARAMEX"},
-				{id:"56789",name:"Laser Printer",note:"note2",stock:"Yes",ship:"FedEx"},
-				{id:"67890",name:"Play Station",note:"note3",stock:"No", ship:"FedEx"},
-				{id:"76543",name:"Mobile Telephone",note:"note",stock:"Yes",ship:"ARAMEX"},
-				{id:"87654",name:"Server",note:"note2",stock:"Yes",ship:"TNT"},
-				{id:"98765",name:"Matrix Printer",note:"note3",stock:"No", ship:"FedEx"}
-				];
-		for(var i=0;i < mydata2.length;i++)
-		 jQuery("#propertiesTable").jqGrid('addRowData',mydata2[i].id,mydata2[i]);
-		*/
+		var storage = getJsonLocalStorage(SESSION_KEY);
+		if (!storage) {
+			storage = {tabs:[]};
+		}
 
 	});

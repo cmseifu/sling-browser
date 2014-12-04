@@ -12,33 +12,79 @@
 <head>
 <title>${currentNode.name}</title>
 <style type="text/css" media="screen">
-#editor { 
-        position: absolute;
-        top: 40px;
-        right: 0;
-        bottom: 0px;
-        left: 0;
-        opacity:0;
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+#editor {
+	top:0px;
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    left: 0;
+    opacity:0;
 }
 nav {
-	height:40px;
+	background-color: #FFF;
+	border: 1px solid #999;
+	border-radius: 0px 0px 10px 10px;
+	position: fixed;
+	right: 0px;
+	padding: 5px;
+	border-top: 0px;
+	z-index: 2;
+	margin-right: 20px;
+	vertical-align:middle;
+	border-top:0px;
+}
+
+nav>button{
+	margin-right:10px;
+	line-height:20px;
+	border: 1px solid #999 !important;
+	background-color:green;
+	color:white;
+}
+
+nav>button:disabled {
+	background-color:red;
 }
 
 .themeSelect {
 	float:right;
 }
 
-#aceThemeSelect{
+#aceThemeSelect {
 	float:right;
 }
+
+#aceThemeSelect {
+	border: 1px solid #999 !important;  /*Removes border*/
+	-webkit-appearance: none;  /*Removes default chrome and safari style*/
+	-moz-appearance: none; /* Removes Default Firefox style*/
+	padding: 5px;
+	border-radius:0px;
+	background: #fff url(${staticRoot}/select_arrow.png) no-repeat 90% center;
+	width: 180px;
+}
+
+
+#aceThemeSelect:focus {
+  outline:none;
+}
+
+
+
+	
 </style>
 </head>
 <body>
+<form>
 	<nav>
-		<form>
+		
 			<button type="button" disabled="disabled" id="saveBtn">save</button>
 			<div class="themeSelect">
-				<small>Theme: </small>
 				<select id="aceThemeSelect">
 					<option>ambiance</option>
 					<option>chaos</option>
@@ -75,8 +121,8 @@ nav {
 					<option>xcode</option>
 				</select>
 			</div>
-		</form>
 	</nav>
+</form>
 	<div id="editor"><c:out value="<%=currentNode.getProperty("jcr:content/jcr:data").getString() %>" escapeXml="true" /></div>
 	<form method="POST" id="updateForm" 
 		action="${currentNode.path}/_jcr_content"
