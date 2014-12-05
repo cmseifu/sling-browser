@@ -277,13 +277,13 @@ body.lock .mixinContainer.editing {
 	text-align: center;
 	position: absolute;
 	z-index: 102;
-	top: 5px;
-	border: 1px solid #999;
+	top: 30px;
+	border: 1px solid #E7C232;
 	width: 80px;
-	left: -70px;
-	background: #eee;
+	left: -25px;
+	background: #F9DEA6;
 	padding: 5px;
-	color: black;  
+	color: black;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -305,12 +305,17 @@ body.lock .mixinContainer.editing {
 	overflow-y: auto;
 }
 
+#addPropMenuDropdown {
+	border-radius: 0px 4px 4px 0px;
+	border-left: 0px;
+}
+
  </style>
 </head>
 <body>
 	<div class="container">
 		  <div class="btn-group" role="group" aria-label="..."> 
-		  	<button type="button" class="btn btn-default" id="mixinBtn">Mixins</button>
+		  	<button type="button" class="btn btn-default" id="mixinBtn">mixins</button>
 		  </div>
 		 
     
@@ -318,11 +323,11 @@ body.lock .mixinContainer.editing {
 		  		<span class="input-group-addon">
         			<input data-title="multi value" type="checkbox" id="propMultiple"  />
       			</span>
-		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" />
+		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" placeholder="new property name"/>
 		  	 	<div class="input-group-btn">
 			  	  <div class="dropdown" id="addPropMenu">
-				  	<button class="btn btn-default dropdown-toggle" type="button" id="addPropMenuDropdown" data-toggle="dropdown" aria-expanded="true">
-				    	As <span class="caret"></span>
+				  	<button class="btn btn-default dropdown-toggle" id="addPropMenuDropdown" data-toggle="dropdown" aria-expanded="true">
+				    	type <span class="caret"></span>
 				  	</button>
 				  	 <ul class="dropdown-menu" role="menu" aria-labelledby="addPropMenuDropdown">
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">String</a></li>

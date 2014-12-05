@@ -14,7 +14,7 @@ jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
 
 var SESSION_KEY = 'browser-property';
 function toggleLock() {
-	if (window.parent && window.parent.document) {
+	if (window.parent && window.parent != window.self && window.parent.document) {
 		$( window.parent.document).find('body').toggleClass('lock');
 	}
 	$('body').toggleClass('lock');
