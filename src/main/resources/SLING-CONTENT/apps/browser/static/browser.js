@@ -1,6 +1,10 @@
-var SESSION_KEY = 'browser';
+var STORAGE_KEY = 'browser';
 
 $(document).ready(function() {
+		var storage = getJsonLocalStorage(STORAGE_KEY);
+		if (!storage) {
+			storage = {tabs:{}};
+		} 
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
 		$("#loginModal").on('shown.bs.modal', function() {
 			$('#login-form #j_username').focus();
@@ -17,6 +21,8 @@ $(document).ready(function() {
 		});
 		if (isAnonymous) {
 			$('#loginModal').modal('show');
+			// Don't bother with the rest of the code execution unless user is login
+			return;
 		}
 		$('#logout').on('click', function(e){
 			e.preventDefault();
@@ -38,14 +44,7 @@ $(document).ready(function() {
 		$('#full-screen, #small-screen').on('click', function(e) {
 			$('body').toggleClass('full-screen');
 		})
-		/*
-		var deleteModal = $('#deleteModal');
-		var confirmModal = $('#confirmModal');
-		var confirmIndexModal = $('#confirmIndexModal');
-		var resultModal = $('#resultModal');
-		var viewModal = $('#viewModal');
-		var viewPanel = $('#viewPanel');
-		*/
+		
 		var suffixProccessed = true;
 		if (suffix != null) {
 			currentPath = suffix;
@@ -58,7 +57,7 @@ $(document).ready(function() {
 		var fileOpenHandler = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
-			addTab($(this).data('node'));
+			addTab($(this).data('simpleNode'));
 		}
 		
 		
@@ -96,7 +95,18 @@ $(document).ready(function() {
 				if (canOpen) {
 					$li.on('dblclick', fileOpenHandler);
 				}
+				/* This copied the properties for serialization when tabs are open or restore */
+				var simpleNode = {
+					name : node.name,
+					path : node.path,
+					canOpen : node.canOpen,
+					nodeType : node.nodeType,
+					openType : node.openType,
+					uuid: node.uuid,
+					fileType : node.fileType
+				}
 				$li.data('node', node);
+				$li.data('simpleNode', simpleNode);
 		    },
 			dataUrl : function (node) { 
 				if (!node) {
@@ -131,7 +141,7 @@ $(document).ready(function() {
 		
 		// Obtain the parent paths of non-loaded nodes
 		function buildPaths() {
-			var paths = getPaths(currentPath);
+			var paths = splitPath(currentPath);
 			var l = paths.length-1;
 			var node = browseTree.tree('getNodeById', paths[l]);
 			while (node == null && l > -1) {
@@ -140,11 +150,11 @@ $(document).ready(function() {
 			if (node != null && node.path != null) {
 				return	paths.slice(paths.indexOf(node.path));
 			} else {
-				return [currentPath];
+				return paths;
 			}
 		}
 		
-		function getPaths(path) {
+		function splitPath(path) {
 			var paths = path.split('/');
 			var tmpout = [];
 			var newPath = [];
@@ -278,22 +288,6 @@ $(document).ready(function() {
 				pushState(node);
 			}
 			browseTree.tree('openNode', node);
-			//viewPanel.empty();
-			//$(window).scrollTop($('#currentPath').offset().top-100);
-			/*
-			new ContentLoader(
-					{	
-						"fillType": "auto", 
-						"limit": 25, 
-						"container" : "#tabItems",
-						"dataType": "html", 
-						"loadOnElement": "#loadMore", 
-						"ajaxUrl" : "/browser.list-children.html"+node.path
-					}, 
-					loaderHandlers
-			);
-			*/
-			
 		}
 		
 		// Push the browser history
@@ -326,6 +320,8 @@ $(document).ready(function() {
 				var tabContent = tabContentTmpl.clone();
 				tabContent.attr('id',node.uuid);
 				pageTabContent.append(tabContent);
+				storage.tabs[node.uuid] = node;
+				setLocalStorage(STORAGE_KEY, storage);
 			}
 			tab.find('a').tab('show');
 		}
@@ -333,9 +329,13 @@ $(document).ready(function() {
 		var removeTabHandler = function(e) {
 			var _self = $(this);
 			var tabId = _self.prev().attr('href');
-			_self.parent().remove();
-			$(tabId).remove();
-			pageTab.find('li:last a').tab('show');
+			if (tabId) {
+				_self.parent().remove();
+				$(tabId).remove();
+				pageTab.find('li:last a').tab('show');
+				delete storage.tabs[tabId.substring(1)];
+				setLocalStorage(STORAGE_KEY, storage);
+			}
 		}
 		
 		
@@ -348,9 +348,16 @@ $(document).ready(function() {
 			}
 		};
 		
-		var storage = getJsonLocalStorage(SESSION_KEY);
-		if (!storage) {
-			storage = {tabs:[]};
+		// Restore tabs 
+		if (storage && storage.tabs) {
+			var tabs = storage.tabs;
+			for (var tab in tabs) {
+				if (tabs.hasOwnProperty(tab)) {
+					addTab(tabs[tab]);
+				}
+			}
 		}
+		
+		
 
 	});
