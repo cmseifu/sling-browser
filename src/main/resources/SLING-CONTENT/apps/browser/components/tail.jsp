@@ -18,8 +18,9 @@
 	var isAnonymous = ${slingRequest.resourceResolver.userID == 'anonymous'};
 	var currentNode = null;
 	var currentPath = null;
+	var slingUserId = "${slingRequest.resourceResolver.userID}";
 	var suffix = "${empty slingRequest.requestPathInfo.suffix ? '/': slingRequest.requestPathInfo.suffix}";
 	
 </script>
 <script src="${staticRoot}/common.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript" src="${staticRoot}/browser.js"></script>
+<script type="text/javascript" src="${staticRoot}/browser.js?t=<%=new java.util.Date().getTime() %>"></script>
