@@ -1,4 +1,4 @@
-var STORAGE_KEY = 'browser';
+var STORAGE_KEY = slingUserId+'-browser';
 
 $(document).ready(function() {
 		var storage = getJsonLocalStorage(STORAGE_KEY);
@@ -172,7 +172,7 @@ $(document).ready(function() {
 				var node = browseTree.tree('getNodeById', paths[0]);
 				if (node && node.path) {
 					if (paths.length == 1) {
-						selectNode(currentPath, false);
+						selectNodeByPath(currentPath, false);
 					} else {
 						$.getJSON(REQUEST_PATH+".json"+node.path, function (data) {
 							var newPaths = paths.slice(1);
@@ -183,18 +183,19 @@ $(document).ready(function() {
 					}
 				} 
 			} else {
-				selectNode(currentPath, false);
+				selectNodeByPath(currentPath, false);
 			}
 		}
 		
 
 		// Select a node
-		function selectNode(id, storeState) {
-			var node = browseTree.tree('getNodeById', id);
+		function selectNodeByPath(path, storeState) {
+			var node = browseTree.tree('getNodeById', path);
 			if (node != null) {
 				browseTree.tree('selectNode', node);
 				updateCurrent(node, storeState);
 			}
+			$('body').trigger('browser:restoreReady');
 		}
 		
 		
@@ -295,7 +296,7 @@ $(document).ready(function() {
 			history.pushState(node.path, node.path, "/browser.html"+node.path);
 		}
 
-		function addTab(node) {
+		function addTab(node, selected) {
 			var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 			if (!tab.length) {
 				if (node.fileType && node.fileType == 'js') {
@@ -323,7 +324,10 @@ $(document).ready(function() {
 				storage.tabs[node.uuid] = node;
 				setLocalStorage(STORAGE_KEY, storage);
 			}
-			tab.find('a').tab('show');
+			// If selected not specified or selected = true
+			if (!arguments[1] || selected) {
+				tab.find('a').trigger('click');
+			}
 		}
 		
 		var removeTabHandler = function(e) {
@@ -348,15 +352,30 @@ $(document).ready(function() {
 			}
 		};
 		
-		// Restore tabs 
-		if (storage && storage.tabs) {
-			var tabs = storage.tabs;
-			for (var tab in tabs) {
-				if (tabs.hasOwnProperty(tab)) {
-					addTab(tabs[tab]);
-				}
+		// Store the last active tab index
+		window.onbeforeunload = function(e) {
+			var activeTabIndex = $('#pageTab li.active').index();
+			storage.activeTabIndex = activeTabIndex;
+			setLocalStorage(STORAGE_KEY,storage);
+		};
+		
+		// When all paths are restored, this event will be fired so we restore the tabs 
+		$('body').on('browser:restoreReady', function () {
+				if (storage && storage.tabs) {
+					var tabs = storage.tabs;
+					for (var tab in tabs) {
+						if (tabs.hasOwnProperty(tab)) {
+							addTab(tabs[tab],false);
+						}
+					}
+					// Select the last active Tab
+					if (storage.activeTabIndex != -1) {
+						$('#pageTab li').eq(storage.activeTabIndex).find('a').trigger('click');
+					}
+				}	
 			}
-		}
+		);
+		
 		
 		
 
