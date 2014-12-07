@@ -40,8 +40,9 @@ $('tr.alert:not(.readonly)').on('dblclick', function() {
 	var _self = $(this);
 	_self.toggleClass('editing');
 	toggleLock();
-	if (!_self.data('renderForm')) {
-		_self.data('renderForm',true);
+	// Create the form only once 
+	if (!_self.data('formRendered')) {
+		_self.data('formRendered',true);
 		createEditPanel(_self);
 	}
 	if (_self.is('.editing')) {
@@ -131,7 +132,8 @@ function createEditPanel(trElement) {
 					})
 				}
 				if (!isValid) {
-					valueEdit.find('form').shake(5,5,800);
+					//HTML5 form validation
+					valueEdit.find('input[type=submit]').trigger('click');
 				}
 				else {
 					$.post($form.attr('action'), $form.serialize())
@@ -194,7 +196,6 @@ function createEditPanel(trElement) {
 		var $form = $('#mixinForm');
 		var $errorMsg = $form.find('.errorMsg');
 		$errorMsg.empty().hide();
-		console.log($form.serialize());
 		$.post($form.attr('action'), $form.serialize())
 		.done(function(data) {
 			var dataHtml = $(data);
@@ -292,8 +293,8 @@ function createEditPanel(trElement) {
 				var $errorMsg = $form.find('.errorMsg');
 				$errorMsg.empty().hide();
 				if (!isValid) {
-					$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
-					$errorMsg.text("Entry is invalid!").show();
+					//HTML5 form validation
+					$form.find('input[type=submit]').trigger('click');
 				} else {
 					$.post($form.attr('action'), $form.serialize())
 					.done(function(data) {

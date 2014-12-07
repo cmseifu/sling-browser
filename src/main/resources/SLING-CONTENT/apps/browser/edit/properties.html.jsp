@@ -410,12 +410,9 @@ body.lock .mixinContainer.editing {
 	</div>
 	<div style="display:none">
 		<form id="propertyFormTmpl"  method="post" action="${resource.path}" enctype="multipart/form-data">
-			<%--
-			<input type="hidden" name=":redirect" value="${slingRequest.requestURL}?editType=${param.editType}" />
-			<input type="hidden" name=":errorpage" value="${slingRequest.requestURL}?editType=${param.editType}" />
-			 --%>
 			<div class="clear"></div>
 			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
+			<input type="submit" style="visibility: hidden" />
 		</form>
 	</div>
 	
@@ -450,6 +447,7 @@ body.lock .mixinContainer.editing {
 			<div class="alert alert-danger errorMsg" style="display:none"></div>
 			<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
 			<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
+			<input type="submit" style="visibility: hidden" />
 	</div>
 	</form>
 
@@ -471,6 +469,7 @@ body.lock .mixinContainer.editing {
 			</div>
 		</div>
 	</div>
+	<input type="submit" style="visibility: hidden" />
 	</form>
 
 	
