@@ -310,15 +310,22 @@ body.lock .mixinContainer.editing {
 	border-left: 0px;
 }
 
+/* secret form submit */
+input[type=submit] {
+	visibility: hidden;display:none
+}
+
  </style>
 </head>
 <body>
 	<div class="container">
+		 <form>
+    	  <input type="submit" />
 		  <div class="btn-group" role="group" aria-label="..."> 
 		  	<button type="button" class="btn btn-default" id="mixinBtn">mixins</button>
 		  </div>
 		 
-    
+    	 
 		  <div class="input-group" role="group" aria-label="..."> 
 		  		<span class="input-group-addon">
         			<input data-title="multi value" type="checkbox" id="propMultiple"  />
@@ -344,6 +351,7 @@ body.lock .mixinContainer.editing {
 					</div>
 			  	</div>
 		  </div>
+		  </form>
 		
 		<table class="table table-condensed">
 			<tbody>
@@ -412,7 +420,7 @@ body.lock .mixinContainer.editing {
 		<form id="propertyFormTmpl"  method="post" action="${resource.path}" enctype="multipart/form-data">
 			<div class="clear"></div>
 			<span class="glyphicon glyphicon-ok" data-action="ok" title="save changes"></span> <span class="glyphicon glyphicon-remove"  data-action="cancel" title="cancel"></span>
-			<input type="submit" style="visibility: hidden" />
+			<input type="submit" />
 		</form>
 	</div>
 	
@@ -447,7 +455,7 @@ body.lock .mixinContainer.editing {
 			<div class="alert alert-danger errorMsg" style="display:none"></div>
 			<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
 			<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
-			<input type="submit" style="visibility: hidden" />
+			<input type="submit" />
 	</div>
 	</form>
 
@@ -469,7 +477,7 @@ body.lock .mixinContainer.editing {
 			</div>
 		</div>
 	</div>
-	<input type="submit" style="visibility: hidden" />
+	<input type="submit" />
 	</form>
 
 	

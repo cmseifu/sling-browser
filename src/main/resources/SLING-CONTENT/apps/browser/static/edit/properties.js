@@ -74,7 +74,7 @@ function createFormElementByType(name, type, value, isMultiple) {
 	} else if (type == 'Reference') {
 		//TODO
 	} else if (type == 'Date') {
-		//TODO
+		out.push('<input type="date" required name="'+name+'" value="'+(value=='' ? value : value.substring(0,value.indexOf('T')))+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
 	} else if (type == 'Name') {
 		//TODO
 	} else if (type == 'Path') {
@@ -144,6 +144,8 @@ function createEditPanel(trElement) {
 						if (status == '200' && message == 'OK') {
 							if (type == 'Boolean') {
 								valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
+							} if (type == 'Date') {
+								valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
 							} else {
 								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
 							}
@@ -237,7 +239,7 @@ function createEditPanel(trElement) {
 		e.preventDefault();
 		var propName = $('#propName');
 		if (!isValidField(propName[0])) {
-			propName.shake(5,5,800);
+			propName.closest('form').find('input[type=submit]').trigger('click');
 			return;
 		}
 		var name = propName.val();
