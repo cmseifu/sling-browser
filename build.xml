@@ -36,11 +36,15 @@ install from eclipse
 
 	<target name="mvn-install">
 		<exec executable="${mvn}" dir="${basedir}">
-			<arg line="-P autoInstallBundle install -Dsling.url=http://${host}:${port}/system/console" />
+			<arg line="install" />
 		</exec>
 	</target>
 	
-	
+	<target name="mvn-deploy">
+			<exec executable="${mvn}" dir="${basedir}">
+				<arg line="-P autoInstallBundle install -Dsling.url=http://${host}:${port}/system/console" />
+			</exec>
+		</target>
 	<target name="mvn-clean-install" depends="mvn-clean">
 		<antcall target="mvn-install" />
 	</target>
