@@ -38,9 +38,9 @@ import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.browser.resource.BrowserResource;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.io.JSONWriter;
 import org.apache.sling.commons.mime.MimeTypeService;
+
+import org.json.JSONWriter;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,19 +92,14 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 		if (browserResource == null) {
 			browserResource = new BrowserResource(request.getResourceResolver().resolve(ROOT_PATH));
 		}
-		boolean isTidy = false;
 		boolean isModeChildren = false;
 		for (String selector : request.getRequestPathInfo().getSelectors()) {
-			if (selector.equals("tidy")) {
-				isTidy = true;
-			}
 			if (selector.equals("children")) {
 				isModeChildren = true;
 			}
 		}
 
 		JSONWriter jsonWriter = new JSONWriter(response.getWriter());
-		jsonWriter.setTidy(isTidy);
 		try {
 			if (isModeChildren) {
 				listChildren(browserResource.getChildren().iterator(),jsonWriter, mineTypeService);
@@ -128,15 +123,13 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 					jsonWriter.endObject();
 				jsonWriter.endArray();
 			}
-		} catch (JSONException je) {
-			log.error(je.getMessage(),je.getCause());
 		} catch (RepositoryException e) {
 			log.error(e.getMessage(),e.getCause());
 		}
 
 	}
 
-	private static void listChildren(Iterator<BrowserResource> it, JSONWriter jsonWriter, MimeTypeService mtService) throws JSONException, RepositoryException {
+	private static void listChildren(Iterator<BrowserResource> it, JSONWriter jsonWriter, MimeTypeService mtService) throws RepositoryException {
 		if (it != null && it.hasNext()) {
 			jsonWriter.array();
 			while (it.hasNext()) {
