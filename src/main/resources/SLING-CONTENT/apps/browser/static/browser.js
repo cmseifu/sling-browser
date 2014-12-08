@@ -6,31 +6,12 @@ $(document).ready(function() {
 			storage = {tabs:{}};
 		} 
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
-		$("#loginModal").on('shown.bs.modal', function() {
-			$('#login-form #j_username').focus();
-		});
-		$('#login-form').on('submit', function(event) {
-			event.preventDefault();
-			$.post('/j_security_check', $(this).serialize(), function(data) {
-				$('#login-form .alert').addClass('hide');
-				window.location.reload(true);
-			}).fail(function() {
-				$('#login-form .alert').removeClass('hide').fadeOut(500).fadeIn(1000);
-				
-			})
-		});
-		if (isAnonymous) {
-			$('#loginModal').modal('show');
-			// Don't bother with the rest of the code execution unless user is login
-			return;
-		}
 		$('#logout').on('click', function(e){
 			e.preventDefault();
 			$.get($(this).attr('href'), function() {
 				window.location.reload(true);
 			})
 		});
-		
 		// Global var refrences
 		var browseTree = $('#browseTree');
 		var viewPanel = $('#viewPanel');
