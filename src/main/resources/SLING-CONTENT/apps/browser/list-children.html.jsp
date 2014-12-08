@@ -11,7 +11,7 @@
     contentType="text/html; charset=utf-8"
     trimDirectiveWhitespaces="true"
 %>
-<%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling" %>
+<%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0" %>
 <sling:defineObjects />
 <%! 
 	private static final String[] SUPPORTED_EXTENSIONS = {

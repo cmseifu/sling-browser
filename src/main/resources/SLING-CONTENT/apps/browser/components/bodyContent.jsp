@@ -1,6 +1,6 @@
 <%@page session="false" contentType="text/html; charset=utf-8"
 	trimDirectiveWhitespaces="true"%>
-<%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling"%>
+<%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <sling:defineObjects/>
@@ -34,5 +34,13 @@
 </div>
 
 <div class="screenLock"></div>
+<ul id="contextMenu" class="dropdown-menu" role="menu" style="display:none" >
+    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-plus" title="add child"></span>New Child</a></li>
+    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-trash" title="delete node"></span>Delete</a></li>
+    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-paperclip" title="copy"></span>Copy</a></li>
+    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-trash" title="paste"></span>Paste</a></li>
+    <li class="divider"></li>
+    <li><a tabindex="-1" href="#">Separated link</a></li>
+</ul>
 
 
