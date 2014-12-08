@@ -378,5 +378,27 @@ $(document).ready(function() {
 		
 		
 		
+		browseTree.contextMenu({
+		    menuSelector: "#contextMenu",
+		    menuSelected: function (invokedOn, selectedMenu) {
+		    	var node = invokedOn.closest('li').data('node');
+		    	var action = selectedMenu.data('action');
+		        
+		    }
+		});
+		
+		/*
+		browseTree.bind(
+			    'tree.contextmenu',
+			    function(event) {
+			        // The clicked node is 'event.node'
+			        var node = event.node;
+			        alert(node.name);
+			    }
+			);
+		*/
+		
+		
+		
 
 	});
