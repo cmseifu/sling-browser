@@ -20,7 +20,7 @@
 		</body>
 	</c:when>
 	<c:otherwise>
-		<%-- Not login use CDN --%>
+		<%-- Not login use CDN for styling --%>
 		<head>
 			<title>Sling Browser Login</title>
 			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -28,7 +28,7 @@
 		<body>
 			<sling:include replaceSelectors="components.login" />
 			<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+			<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 			<script>
 			$("#loginModal").on('shown.bs.modal', function() {
 				$('#login-form #j_username').focus();

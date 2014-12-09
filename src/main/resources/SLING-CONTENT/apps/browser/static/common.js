@@ -25,7 +25,7 @@
             });
 
             //make sure menu closes on any click
-            $(document).click(function () {
+            $(document).on('click', function () {
                 $(settings.menuSelector).hide();
             });
         });
@@ -70,6 +70,13 @@
     };
 })(jQuery, window);
 /* End extend */
+
+// If in a frame, hide parent contextMenu
+$(document).on('click', function(e) {
+	if (window.parent && window.parent != window.self && window.parent.document) {
+		$(window.parent.document).find('#contextMenu').hide();
+	}
+});
 
 // Check for safari 
 function isSafari() {
