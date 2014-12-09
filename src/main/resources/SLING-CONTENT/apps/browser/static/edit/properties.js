@@ -1,6 +1,10 @@
 
 
 var SESSION_KEY = 'browser-property';
+
+function isSafari() {
+	return /^((?!chrome).)*safari/i.test(navigator.userAgent);
+}
 function toggleLock() {
 	if (window.parent && window.parent != window.self && window.parent.document) {
 		$( window.parent.document).find('body').toggleClass('lock');
@@ -110,18 +114,29 @@ function createEditPanel(trElement) {
 			else if (action == 'ok') {
 				var $form = $target.closest('form');
 				var isValid = true;
+				var invaldField = null;
 				var fields = $form.find('[required]');
 				if (fields.length) {
 					fields.each(function() {
 						if (!isValidField(this)) {
 							isValid = false;
-							return;
+							invalidField = this;
+							return false;
 						}
 					})
 				}
+				var $errorMsg = $form.find('.errorMsg');
+				$errorMsg.empty().hide();
+				$form.find('.fieldItem').removeClass('alert alert-danger');
 				if (!isValid) {
 					//HTML5 form validation
-					valueEdit.find('input[type=submit]').trigger('click');
+					//Safari do not support error message so we just shake it 
+					if (isSafari()) {
+						$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
+					}
+					else {
+						valueEdit.find('input[type=submit]').trigger('click');
+					}
 				}
 				else {
 					$.post($form.attr('action'), $form.serialize())
@@ -177,11 +192,6 @@ function createEditPanel(trElement) {
 		toggleLock();
 	});
 	
-	$('#propCancelBtn').on('click', function() {
-		$('#addPropModal').modal('hide');
-		toggleLock();
-	});
-	
 	$('#mixinSubmitBtn').on('click', function() {
 		var $form = $('#mixinForm');
 		var $errorMsg = $form.find('.errorMsg');
@@ -207,6 +217,13 @@ function createEditPanel(trElement) {
 		
 	});
 	
+	// Property Modal
+	$('#propCancelBtn').on('click', function() {
+		$('#addPropModal').modal('hide');
+		toggleLock();
+	});
+	
+	// Escape when locked
 	$(document).on('keyup', function(e) {
 		  if (e.keyCode === 27 && $('body.lock').length) { 
 			  $('.editing').toggleClass('editing');
@@ -226,8 +243,14 @@ function createEditPanel(trElement) {
 	function addPropMenuitemHandler(e) {
 		e.preventDefault();
 		var propName = $('#propName');
+		propName.removeClass('alert alert-danger');
 		if (!isValidField(propName[0])) {
-			propName.closest('form').find('input[type=submit]').trigger('click');
+			if (isSafari()) {
+				propName.addClass('alert alert-danger').shake(5,5,800);
+			} else {
+				propName.closest('form').find('input[type=submit]').trigger('click');
+			}
+			
 			return;
 		}
 		var name = propName.val();
@@ -284,7 +307,14 @@ function createEditPanel(trElement) {
 				$errorMsg.empty().hide();
 				if (!isValid) {
 					//HTML5 form validation
-					$form.find('input[type=submit]').trigger('click');
+					//Safari do not support error message so we just shake it 
+					if (isSafari()) {
+						$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
+						$errorMsg.text("Entry is invalid!").show();
+					}
+					else {
+						valueEdit.find('input[type=submit]').trigger('click');
+					}
 				} else {
 					$.post($form.attr('action'), $form.serialize())
 					.done(function(data) {

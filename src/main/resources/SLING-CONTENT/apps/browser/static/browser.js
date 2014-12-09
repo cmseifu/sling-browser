@@ -195,7 +195,6 @@ $(document).ready(function() {
 		
 		// Update the breadcrumb
 		function updateNav(path) {
-			
 			var prefix = "/";
 			var paths = path.substring(prefix.length).split('/');
 			var tmpout = [];
@@ -367,18 +366,6 @@ $(document).ready(function() {
 		        
 		    }
 		});
-		
-		/*
-		browseTree.bind(
-			    'tree.contextmenu',
-			    function(event) {
-			        // The clicked node is 'event.node'
-			        var node = event.node;
-			        alert(node.name);
-			    }
-			);
-		*/
-		
 		
 		
 
