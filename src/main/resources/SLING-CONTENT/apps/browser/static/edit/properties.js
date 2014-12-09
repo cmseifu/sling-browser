@@ -1,168 +1,164 @@
-
-
-var SESSION_KEY = 'browser-property';
-
-function isSafari() {
-	return /^((?!chrome).)*safari/i.test(navigator.userAgent);
-}
-function toggleLock() {
-	if (window.parent && window.parent != window.self && window.parent.document) {
-		$( window.parent.document).find('body').toggleClass('lock');
-	}
-	$('body').toggleClass('lock');
-}
-
-function removePropertyHandler(e) {
-	e.preventDefault();
-	e.stopPropagation();
-	var _tr = $(this).closest('tr');
-	var propStr = encodeURIComponent(_tr.data('name'))+'@Delete=';
+(function() {
+	var SESSION_STORAGE_KEY = slingUserId+'-browser-property';
 	
-	$.post(resourcePath+"?"+propStr).done(function(data){
-		_tr.fadeOut(800, function() { _tr.remove(); })
-	}).fail(function() {
-		_tr.shake(5,5,800);
-	});
-}
-
-$('.glyphicon-trash').one('click dblclick', removePropertyHandler);
-
-var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
-$('tr.alert:not(.readonly)').on('dblclick', function() {
-	var _self = $(this);
-	_self.toggleClass('editing');
-	toggleLock();
-	// Create the form only once 
-	if (!_self.data('formRendered')) {
-		_self.data('formRendered',true);
-		createEditPanel(_self);
-	}
-	if (_self.is('.editing')) {
-		var valueEdit = _self.find('.value-edit')
-		var clientRect = valueEdit[0].getBoundingClientRect();
-		valueEdit.css({position:'fixed',width:clientRect.width , left:clientRect.left, top:clientRect.top});
-	}
-})
-// JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
-
-function createFormElementByType(name, type, value, isMultiple) {
-	var out = [];
-	out.push('<div class="fieldItem'+(!isMultiple ? ' single':'')+'">')
-	if (type == 'Boolean') {
-		/* Because checkbox is not submitted, we need to provide default value */
-		out.push('<input type="checkbox" name="'+name+'" onclick="this.value=this.checked?true:false" value="'+value+'" '+(value=='true' ? 'checked="checked"': '')+' />');
-		out.push('<input type="hidden" name="'+name+'@DefaultValue" value="false"/>');
-		out.push('<input type="hidden" name="'+name+'@UseDefaultWhenMissing" value="true"/>');
-	} else if (type == 'Long'){
-		out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
-	} else if (type == 'Double') {
-		out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
-	} else if (type == 'String') {
-		if (isMultiple) {
-			out.push('<input type="text" required name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
-		} else {
-			out.push('<textarea required name="'+name+'">'+value+'</textarea>');
+	function toggleLock() {
+		if (window.parent && window.parent != window.self && window.parent.document) {
+			$( window.parent.document).find('body').toggleClass('lock');
 		}
-	} else if (type == 'Reference') {
-		//TODO
-	} else if (type == 'Date') {
-		out.push('<input type="date" required name="'+name+'" value="'+(value=='' ? value : value.substring(0,value.indexOf('T')))+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
-	} else if (type == 'Name') {
-		//TODO
-	} else if (type == 'Path') {
-		//TODO
-	} else if (type == 'Undefined') {
-		//TODO
-	} 
-	if (isMultiple) {
-		out.push('<span class="glyphicon glyphicon-remove-circle" data-action="remove-prop"></span>')
+		$('body').toggleClass('lock');
 	}
-	out.push('</div>');
-	return out.join('');
-}
-function createEditPanel(trElement) {
-	var name = trElement.data('name');
-	var type = trElement.data('type');
-	var isMultiple =  trElement.data('multiple')
-	var valueEdit = trElement.find('.value-edit');
-	var out = [];
 	
-	var originalValues =  valueEdit.find('span').map(function() { return $(this).text(); }).get();
-	for (var i=0,j=originalValues.length;i<j;i++) {
-		out.push(createFormElementByType(name, type, originalValues[i], isMultiple));
+	function removePropertyHandler(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var _tr = $(this).closest('tr');
+		var propStr = encodeURIComponent(_tr.data('name'))+'@Delete=';
+		
+		$.post(resourcePath+"?"+propStr).done(function(data){
+			_tr.fadeOut(800, function() { _tr.remove(); })
+		}).fail(function() {
+			_tr.shake(5,5,800);
+		});
 	}
-	if (isMultiple) {
-		out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
+	
+	$('.glyphicon-trash').one('click dblclick', removePropertyHandler);
+	
+	var propertyFormTmpl = $('#propertyFormTmpl').clone().removeAttr('id');
+	$('tr.alert:not(.readonly)').on('dblclick', function() {
+		var _self = $(this);
+		_self.toggleClass('editing');
+		toggleLock();
+		// Create the form only once 
+		if (!_self.data('formRendered')) {
+			_self.data('formRendered',true);
+			createEditPanel(_self);
+		}
+		if (_self.is('.editing')) {
+			var valueEdit = _self.find('.value-edit')
+			var clientRect = valueEdit[0].getBoundingClientRect();
+			valueEdit.css({position:'fixed',width:clientRect.width , left:clientRect.left, top:clientRect.top});
+		}
+	})
+	// JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
+	
+	function createFormElementByType(name, type, value, isMultiple) {
+		var out = [];
+		out.push('<div class="fieldItem'+(!isMultiple ? ' single':'')+'">')
+		if (type == 'Boolean') {
+			/* Because checkbox is not submitted, we need to provide default value */
+			out.push('<input type="checkbox" name="'+name+'" onclick="this.value=this.checked?true:false" value="'+value+'" '+(value=='true' ? 'checked="checked"': '')+' />');
+			out.push('<input type="hidden" name="'+name+'@DefaultValue" value="false"/>');
+			out.push('<input type="hidden" name="'+name+'@UseDefaultWhenMissing" value="true"/>');
+		} else if (type == 'Long'){
+			out.push('<input type="text" required pattern="[0-9]+" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
+		} else if (type == 'Double') {
+			out.push('<input type="text" required pattern="\\d+(\\.\\d+)?" name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
+		} else if (type == 'String') {
+			if (isMultiple) {
+				out.push('<input type="text" required name="'+name+'" value="'+value+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
+			} else {
+				out.push('<textarea required name="'+name+'">'+value+'</textarea>');
+			}
+		} else if (type == 'Reference') {
+			//TODO
+		} else if (type == 'Date') {
+			out.push('<input type="date" required name="'+name+'" value="'+(value=='' ? value : value.substring(0,value.indexOf('T')))+'" autocapitalize="off" autocorrect="off" autocomplete="off" />');
+		} else if (type == 'Name') {
+			//TODO
+		} else if (type == 'Path') {
+			//TODO
+		} else if (type == 'Undefined') {
+			//TODO
+		} 
+		if (isMultiple) {
+			out.push('<span class="glyphicon glyphicon-remove-circle" data-action="remove-prop"></span>')
+		}
+		out.push('</div>');
+		return out.join('');
 	}
-	valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
-	valueEdit.on('click', function(e) {
-		var _propRoot = $(this).closest('tr');
-		if (e.target.nodeName == 'SPAN') {
-			e.preventDefault();
-			e.stopPropagation();
-			var $target = $(e.target);
-			action = $target.data('action');
-			if (!action) return;
-			if (action == 'cancel') {
-				$target.closest('tr').trigger('dblclick');
-			} else if (action == 'remove-prop') {
-				$target.parent().remove();
-			} else if (action == 'add-prop') {
-				$(createFormElementByType(_propRoot.data('name'), _propRoot.data('type'), '', true)).insertBefore($target);
-			}  
-			
-			else if (action == 'ok') {
-				var $form = $target.closest('form');
-				var isValid = true;
-				var invaldField = null;
-				var fields = $form.find('[required]');
-				if (fields.length) {
-					fields.each(function() {
-						if (!isValidField(this)) {
-							isValid = false;
-							invalidField = this;
-							return false;
+	function createEditPanel(trElement) {
+		var name = trElement.data('name');
+		var type = trElement.data('type');
+		var isMultiple =  trElement.data('multiple')
+		var valueEdit = trElement.find('.value-edit');
+		var out = [];
+		
+		var originalValues =  valueEdit.find('span').map(function() { return $(this).text(); }).get();
+		for (var i=0,j=originalValues.length;i<j;i++) {
+			out.push(createFormElementByType(name, type, originalValues[i], isMultiple));
+		}
+		if (isMultiple) {
+			out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
+		}
+		valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
+		valueEdit.on('click', function(e) {
+			var _propRoot = $(this).closest('tr');
+			if (e.target.nodeName == 'SPAN') {
+				e.preventDefault();
+				e.stopPropagation();
+				var $target = $(e.target);
+				action = $target.data('action');
+				if (!action) return;
+				if (action == 'cancel') {
+					$target.closest('tr').trigger('dblclick');
+				} else if (action == 'remove-prop') {
+					$target.parent().remove();
+				} else if (action == 'add-prop') {
+					$(createFormElementByType(_propRoot.data('name'), _propRoot.data('type'), '', true)).insertBefore($target);
+				}  
+				
+				else if (action == 'ok') {
+					var $form = $target.closest('form');
+					var isValid = true;
+					var invaldField = null;
+					var fields = $form.find('[required]');
+					if (fields.length) {
+						fields.each(function() {
+							if (!isValidField(this)) {
+								isValid = false;
+								invalidField = this;
+								return false;
+							}
+						})
+					}
+					var $errorMsg = $form.find('.errorMsg');
+					$errorMsg.empty().hide();
+					$form.find('.fieldItem').removeClass('alert alert-danger');
+					if (!isValid) {
+						//HTML5 form validation
+						//Safari do not support error message so we just shake it 
+						if (isSafari()) {
+							$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
 						}
-					})
-				}
-				var $errorMsg = $form.find('.errorMsg');
-				$errorMsg.empty().hide();
-				$form.find('.fieldItem').removeClass('alert alert-danger');
-				if (!isValid) {
-					//HTML5 form validation
-					//Safari do not support error message so we just shake it 
-					if (isSafari()) {
-						$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
+						else {
+							valueEdit.find('input[type=submit]').trigger('click');
+						}
 					}
 					else {
-						valueEdit.find('input[type=submit]').trigger('click');
+						$.post($form.attr('action'), $form.serialize())
+						.done(function(data) {
+							var dataHtml = $(data);
+							var status = dataHtml.find('#Status').text();
+							var message = dataHtml.find('#Message').text();
+							if (status == '200' && message == 'OK') {
+								if (type == 'Boolean') {
+									valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
+								} if (type == 'Date') {
+									valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
+								} else {
+									valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
+								}
+								visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
+							}
+						}).fail(function(jqXHR, textStatus, errorThrown) {
+							valueEdit.find('form').shake(5,5,800);
+						})
 					}
 				}
-				else {
-					$.post($form.attr('action'), $form.serialize())
-					.done(function(data) {
-						var dataHtml = $(data);
-						var status = dataHtml.find('#Status').text();
-						var message = dataHtml.find('#Message').text();
-						if (status == '200' && message == 'OK') {
-							if (type == 'Boolean') {
-								valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
-							} if (type == 'Date') {
-								valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
-							} else {
-								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
-							}
-							visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
-						}
-					}).fail(function(jqXHR, textStatus, errorThrown) {
-						valueEdit.find('form').shake(5,5,800);
-					})
-				}
-			}
-		} 
-	})
- 	
-}
+			} 
+		})
+	 	
+	}
 /*
 		if (fieldValue.indexOf('<') > -1) {
 			var textarea  = $('<textarea></textarea>').attr('name',field).attr('value',fieldValue).appendTo(fieldSet);
@@ -204,7 +200,7 @@ function createEditPanel(trElement) {
 			
 			if (status == '200' && message == 'OK') {
 				toggleLock();
-				setSessionStorage(SESSION_KEY, {highlight: ['jcr:mixinTypes']});
+				setSessionStorage(SESSION_STORAGE_KEY, {highlight: ['jcr:mixinTypes']});
 				window.location.reload(true);
 			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -323,7 +319,7 @@ function createEditPanel(trElement) {
 						var message = dataHtml.find('#Message').text();
 						if (status == '200' && message == 'OK') {
 							toggleLock();
-							setSessionStorage(SESSION_KEY, {highlight: [$('#addPropModal').data('name')]});
+							setSessionStorage(SESSION_STORAGE_KEY, {highlight: [$('#addPropModal').data('name')]});
 							window.location.reload(true);
 						}
 					}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -344,13 +340,13 @@ function createEditPanel(trElement) {
 	}
 	
 	function restoreSession() {
-		var storage = getJsonSessionStorage(SESSION_KEY);
+		var storage = getJsonSessionStorage(SESSION_STORAGE_KEY);
 		if (storage && storage.highlight) {
 			for (var i=0;i<storage.highlight.length;i++) {
 				visualUpdate($('tr[data-name=\''+storage.highlight[i]+'\']'));
 			}
-			clearSessionStorage(SESSION_KEY);
+			clearSessionStorage(SESSION_STORAGE_KEY);
 		}
 	}
 	restoreSession();
-
+})();

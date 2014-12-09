@@ -1,6 +1,6 @@
 // Editor.js
 (function() {
-	var SESSION_KEY = 'browser-file';
+	var STORAGE_KEY = slingUserId+'-browser-file';
 	var editor = ace.edit("editor");
 	var saveBtn = $('#saveBtn');
 	// parent file should set the aceMode variable
@@ -13,7 +13,7 @@
 	$('#aceThemeSelect').on('change',function () {
 		var theme = $(this).val();
 		editor.setTheme("ace/theme/"+theme);
-		setLocalStorage(SESSION_KEY, {theme:theme});
+		setLocalStorage(STORAGE_KEY, {theme:theme});
 	})
 	saveBtn.on('click', function(e) {
 		this.disabled=true;
@@ -22,7 +22,7 @@
 	});
 	$('#editor').css('opacity',1);
 	
-	var storage = getJsonLocalStorage(SESSION_KEY);
+	var storage = getJsonLocalStorage(STORAGE_KEY);
 	if (storage && storage.theme) {
 		$('#aceThemeSelect').val(storage.theme).trigger('change');
 	}

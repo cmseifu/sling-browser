@@ -10,15 +10,17 @@
 <script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${staticRoot}/jqTree-0.22/tree.jquery.js"></script>
 <script type="text/javascript" src="${staticRoot}/contentloader.js"></script>
-<script type="text/javascript" src="${staticRoot}/jquery.jqGrid-4.6.0/js/jquery.jqGrid.min.js"></script>
 
 <script type="text/javascript">
+	var resourcePath = "${resource.path}";
+	var slingUserId = "${slingRequest.resourceResolver.userID}";
+	
 	var ROOT_PATH = "/";
 	var REQUEST_PATH = "/services/browser";
 	var isAnonymous = ${slingRequest.resourceResolver.userID == 'anonymous'};
 	var currentNode = null;
 	var currentPath = null;
-	var slingUserId = "${slingRequest.resourceResolver.userID}";
+	
 	var suffix = "${empty slingRequest.requestPathInfo.suffix ? '/': slingRequest.requestPathInfo.suffix}";
 	
 </script>

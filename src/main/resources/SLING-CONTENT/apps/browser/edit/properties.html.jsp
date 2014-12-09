@@ -180,6 +180,7 @@ body.lock .mixinContainer.editing {
 	z-index: 101;
 	top:0px;
 	height:100%;
+	overflow-y:auto;
 }
 
 .mixinItem {
@@ -456,6 +457,7 @@ input[type=submit] {
 			<button type="button" class="btn btn-default" id="mixinCancelBtn">Cancel</button>
 			<button type="button" class="btn btn-primary" id="mixinSubmitBtn">Submit</button>
 			<input type="submit" />
+			<div class="clear"></div>
 	</div>
 	</form>
 
@@ -485,7 +487,8 @@ input[type=submit] {
 	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
 	<script>
-		resourcePath = "${resource.path}";
+		var resourcePath = "${resource.path}";
+		var slingUserId = "${slingRequest.resourceResolver.userID}";
 	</script>
 	<script src="${staticRoot}/common.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>
 	<script src="${staticRoot}/edit/properties.js?t=<%=new java.util.Date().getTime() %>" type="text/javascript" charset="utf-8"></script>

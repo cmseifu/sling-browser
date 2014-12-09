@@ -10,6 +10,8 @@ $(document).ready(function() {
 			e.preventDefault();
 			$.get($(this).attr('href'), function() {
 				window.location.reload(true);
+			}).fail(function() {
+				window.location.reload(true);
 			})
 		});
 		// Global var refrences

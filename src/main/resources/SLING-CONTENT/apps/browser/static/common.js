@@ -71,6 +71,11 @@
 })(jQuery, window);
 /* End extend */
 
+// Check for safari 
+function isSafari() {
+	return /^((?!chrome).)*safari/i.test(navigator.userAgent);
+}
+
 
 /* Local Storage methods, persist to host */
    /* Use check if localStorage is supported */

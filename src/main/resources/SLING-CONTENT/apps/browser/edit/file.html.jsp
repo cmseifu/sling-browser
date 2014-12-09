@@ -132,7 +132,10 @@ nav>button:disabled {
 	</form>
 
 	<script>
+		var resourcePath = "${resource.path}";
+		var slingUserId = "${slingRequest.resourceResolver.userID}";
 		var aceMode = "ace/mode/${param.fileType}";
+		
 	</script>
 	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script src="${staticRoot}/ace-1.1.7/src-min/ace.js" type="text/javascript" charset="utf-8"></script>

@@ -5,7 +5,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Login</h4>
+				<h4 class="modal-title">Sling Browser Login</h4>
 			</div>
 			<div class="modal-body">
 					<div class="hide alert alert-danger" role="alert">Invalid username or
