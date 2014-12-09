@@ -1,7 +1,7 @@
 
 <form id="login-form" method="post" action="/j_security_check">
 <input type="hidden" name=":redirect" value="${request.requestURL}" />
-<div id="loginModal" class="modal fade">
+<div id="loginModal" class="modal fade" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
