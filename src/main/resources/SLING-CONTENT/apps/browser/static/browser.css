@@ -213,3 +213,39 @@ body.lock .col-b {
 	z-index:101;
 }
 
+#contextMenu li:hover .fa-refresh {
+	color:cadetblue;
+}
+
+#contextMenu li:hover .fa-plus-circle {
+	color:darkgreen;
+}
+
+#contextMenu li:hover .fa-trash {
+	color:maroon;
+}
+
+#contextMenu li:hover .fa-copy {
+	color:yellowgreen;
+}
+
+#contextMenu li:hover .fa-paste {
+	color:darkgoldenrod;
+}
+
+#contextMenu li:hover .fa-arrows {
+	color:darkslateblue;
+}
+
+#contextMenu li:hover .fa-wrench {
+	color:darkslateblue;
+}
+
+#contextMenu li:hover .fa-wrench {
+	color:orange;
+}
+
+
+
+	
+

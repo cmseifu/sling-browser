@@ -35,12 +35,16 @@
 
 <div class="screenLock"></div>
 <ul id="contextMenu" class="dropdown-menu" role="menu" style="display:none" >
-    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-plus" title="add child"></span>New Child</a></li>
-    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-trash" title="delete node"></span>Delete</a></li>
-    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-paperclip" title="copy"></span>Copy</a></li>
-    <li><a tabindex="-1" href="#"><span class="glyphicon glyphicon-trash" title="paste"></span>Paste</a></li>
+	<li><a tabindex="-1" href="#"><span class="fa fa-refresh" title="add child"></span> Refresh</a></li>
+	<li class="divider"></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-plus-circle" title="add child"></span> Add</a></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-trash" title="delete node"></span> Delete</a></li>
     <li class="divider"></li>
-    <li><a tabindex="-1" href="#">Separated link</a></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-copy" title="delete node"></span> Copy</a></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-paste" title="delete node"></span> Paste</a></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-arrows" title="delete node"></span> Move...</a></li>
+    <li><a tabindex="-1" href="#"><span class="fa fa-wrench" title="delete node"></span> Rename</a></li>
+    <li class="divider"></li>
 </ul>
 
 
