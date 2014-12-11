@@ -8,7 +8,7 @@ $(document).ready(function() {
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
 		$('#logout').on('click', function(e){
 			e.preventDefault();
-			$.get($(this).attr('href'), function() {
+			$.post($(this).attr('href'), function() {
 				window.location.reload(true);
 			}).fail(function() {
 				window.location.reload(true);
@@ -171,7 +171,7 @@ $(document).ready(function() {
 		}
 		
 
-		// Select a node
+		// Select a node by path
 		function selectNodeByPath(path, storeState) {
 			var node = browseTree.tree('getNodeById', path);
 			if (node != null) {
@@ -183,14 +183,19 @@ $(document).ready(function() {
 		
 		
 		// Refresh a node
-		function refreshNode(node) {
-			$.getJSON(node.path+".browse.folder.json", { "noCache": "noCache" }, function (data) {
+		function refreshNode(node, selectPath) {
+			if (!node) return;
+			$.getJSON(REQUEST_PATH+".json"+node.path, { "noCache": "noCache" }, function (data) {
 	        	 browseTree.tree('updateNode',node,{label:data[0].label});
 	        	 if (data[0].children) {
 	        		 browseTree.tree('loadData', data[0].children, node);
 	        	 }
-	        	 browseTree.tree('selectNode', node);
-	        	 updateCurrent(node);
+	        	 if (!selectPath) {
+		        	 browseTree.tree('selectNode', node);
+		        	 updateCurrent(node);
+	        	 } else {
+	        		 selectNodeByPath(selectPath, true);
+	        	 }
 	        });
 		}
 		
@@ -359,12 +364,65 @@ $(document).ready(function() {
 		);
 		
 		
+		$('#newModal #createBtn').on('click', function(e) {
+			var $form = $(this).closest('form');
+			if (!isFormValid($form)) {
+				return;
+			}
+			var treeLi = $('#newModal').data('treeLi');
+			var node = treeLi.data('simpleNode') ;
+			var newPath = node.path+'/'+$form.find('#newNodeName').val();
+			$.post(newPath+'?jcr:primaryType='+$form.find('#nodeTypeSelect').val())
+			.done(function(data) {
+				var dataHtml = $(data);
+				var status = dataHtml.find('#Status').text();
+				var message = dataHtml.find('#Message').text();
+				if ((status == '200' && message == 'OK') || (status == '201' && message == 'Created')) {
+					refreshNode(treeLi.data('node'),newPath);
+				}
+				$('#newModal').removeData('treeLi').modal('hide');
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				var dataHtml = $(jqXHR.responseText);
+				var status = dataHtml.find('#Status').text();
+				var message = dataHtml.find('#Message').text();
+				
+				$form.find('.errorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+			});
+		})
 		
 		browseTree.contextMenu({
 		    menuSelector: "#contextMenu",
 		    menuSelected: function (invokedOn, selectedMenu) {
-		    	var node = invokedOn.closest('li').data('node');
-		    	var action = selectedMenu.data('action');
+		    	var action = selectedMenu.closest('li').data('action');
+		    	if (!action) return;
+		    	var treeLi = invokedOn.closest('li');
+		    	switch (action) {
+		    		case 'add' : $('#newModal').data('treeLi', treeLi).modal('show'); 
+		    			break;
+		    		case 'refresh' : refreshNode(treeLi.data('node'));
+	    				break;
+		    		case 'delete' : 
+		    			$.post(treeLi.data('simpleNode').path+'?:operation=delete')
+		    			.done(function(data) {
+		    				var dataHtml = $(data);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				if ((status == '200' && message == 'OK')) {
+		    					refreshNode(treeLi.data('node').parent);
+		    				}
+		    			
+		    			}).fail(function(jqXHR, textStatus, errorThrown) {
+		    				var dataHtml = $(jqXHR.responseText);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				
+		    				$form.find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
+		    			});
+		    			
+    				break;
+		    	
+		    	}
+		    		
 		        
 		    }
 		});

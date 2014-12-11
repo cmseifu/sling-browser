@@ -16,6 +16,8 @@
                     })
                     .off('click')
                     .on('click', function (e) {
+                    	e.preventDefault();
+                    	e.stopPropagation();
                         $(this).hide();
                         var $invokedOn = $(this).data("invokedOn");
                         var $selectedMenu = $(e.target);
@@ -82,6 +84,51 @@ $(document).on('click', function(e) {
 function isSafari() {
 	return /^((?!chrome).)*safari/i.test(navigator.userAgent);
 }
+
+// Field validation
+function isValidField(field) {
+	if (typeof field.willValidate !== "undefined") {
+		field.checkValidity();
+		return field.validity.valid;
+	}
+	// Legacy browser, will let server handle the validation so returning true
+	return true;
+}
+
+// Check if form is valid before submit
+function isFormValid($form) {
+	var isValid = true;
+	var invaldField = null;
+	var fields = $form.find('[required]');
+	// Clear all errors
+	fields.removeClass('alert alert-danger');
+	if (fields.length) {
+		fields.each(function() {
+			if (!isValidField(this)) {
+				isValid = false;
+				invalidField = this;
+				return false;
+			}
+		})
+	}
+	var $errorMsg = $form.find('.errorMsg');
+	$errorMsg.empty().hide();
+	if (!isValid) {
+		//HTML5 form validation
+		//Safari do not support error message so we just shake it 
+		if (isSafari()) {
+			$(invalidField).addClass('alert alert-danger').shake(5,5,800);
+			$(invalidField).one('focus', function() { $(this).removeClass('alert alert-danger')});
+			$errorMsg.text("Entry is invalid!").show();
+		}
+		else {
+			$form.find('input[type=submit]').trigger('click');
+		}
+		return false;
+	}
+	return true;
+}
+
 
 
 /* Local Storage methods, persist to host */

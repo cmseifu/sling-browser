@@ -245,7 +245,14 @@ body.lock .col-b {
 	color:orange;
 }
 
+#newNodeName {
+	width:49%;
+	float:left;
+}
 
-
+#nodeTypeSelect {
+	width:49%;
+	float:right;
+}
 	
 

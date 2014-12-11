@@ -16,6 +16,7 @@
 		</head>
 		<body>
 			<sling:include replaceSelectors="components.bodyContent" />
+			<sling:include replaceSelectors="components.modals" />
 			<sling:include replaceSelectors="components.tail" />
 		</body>
 	</c:when>

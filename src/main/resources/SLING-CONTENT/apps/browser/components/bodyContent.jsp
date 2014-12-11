@@ -2,7 +2,7 @@
 	trimDirectiveWhitespaces="true"%>
 <%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <sling:defineObjects/>
 <!-- <div id="dock"></div> -->
 <div class="header">
@@ -28,23 +28,29 @@
 	</div>
 </div>
 
-<div style="display:none">
-	<li id="tabTmpl"><a data-toggle="tab"></a><span>x</span></li>
-	<div id="tabContentTmpl" class="tab-pane"></div>
-</div>
 
 <div class="screenLock"></div>
 <ul id="contextMenu" class="dropdown-menu" role="menu" style="display:none" >
-	<li><a tabindex="-1" href="#"><span class="fa fa-refresh" title="add child"></span> Refresh</a></li>
+	<li data-action="refresh"><a tabindex="-1" href="#"><span class="fa fa-refresh" title="add child"></span> Refresh</a></li>
 	<li class="divider"></li>
-    <li><a tabindex="-1" href="#"><span class="fa fa-plus-circle" title="add child"></span> Add</a></li>
-    <li><a tabindex="-1" href="#"><span class="fa fa-trash" title="delete node"></span> Delete</a></li>
+    <li data-action="add"><a tabindex="-1" href="#"><span class="fa fa-plus-circle" title="add child"></span> Add</a></li>
+    <li data-action="delete"><a tabindex="-1" href="#"><span class="fa fa-trash" title="delete node"></span> Delete</a></li>
     <li class="divider"></li>
-    <li><a tabindex="-1" href="#"><span class="fa fa-copy" title="delete node"></span> Copy</a></li>
-    <li><a tabindex="-1" href="#"><span class="fa fa-paste" title="delete node"></span> Paste</a></li>
+    <li data-action="copy"><a tabindex="-1" href="#"><span class="fa fa-copy" title="delete node"></span> Copy</a></li>
+    <li data-action="paste"><a tabindex="-1" href="#"><span class="fa fa-paste" title="delete node"></span> Paste</a></li>
+    <!-- 
     <li><a tabindex="-1" href="#"><span class="fa fa-arrows" title="delete node"></span> Move...</a></li>
-    <li><a tabindex="-1" href="#"><span class="fa fa-wrench" title="delete node"></span> Rename</a></li>
+     -->
+    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title="delete node"></span> Rename</a></li>
     <li class="divider"></li>
 </ul>
+
+
+<div style="display:none">
+	<li id="tabTmpl"><a data-toggle="tab"></a><span>x</span></li>
+	<div id="tabContentTmpl" class="tab-pane"></div>
+	
+</div>
+
 
 

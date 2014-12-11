@@ -109,51 +109,28 @@
 				
 				else if (action == 'ok') {
 					var $form = $target.closest('form');
-					var isValid = true;
-					var invaldField = null;
-					var fields = $form.find('[required]');
-					if (fields.length) {
-						fields.each(function() {
-							if (!isValidField(this)) {
-								isValid = false;
-								invalidField = this;
-								return false;
+					if (!isFormValid($form)) {
+						return;
+					}
+					$.post($form.attr('action'), $form.serialize())
+					.done(function(data) {
+						var dataHtml = $(data);
+						var status = dataHtml.find('#Status').text();
+						var message = dataHtml.find('#Message').text();
+						if (status == '200' && message == 'OK') {
+							if (type == 'Boolean') {
+								valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
+							} if (type == 'Date') {
+								valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
+							} else {
+								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
 							}
-						})
-					}
-					var $errorMsg = $form.find('.errorMsg');
-					$errorMsg.empty().hide();
-					$form.find('.fieldItem').removeClass('alert alert-danger');
-					if (!isValid) {
-						//HTML5 form validation
-						//Safari do not support error message so we just shake it 
-						if (isSafari()) {
-							$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
+							visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
 						}
-						else {
-							valueEdit.find('input[type=submit]').trigger('click');
-						}
-					}
-					else {
-						$.post($form.attr('action'), $form.serialize())
-						.done(function(data) {
-							var dataHtml = $(data);
-							var status = dataHtml.find('#Status').text();
-							var message = dataHtml.find('#Message').text();
-							if (status == '200' && message == 'OK') {
-								if (type == 'Boolean') {
-									valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
-								} if (type == 'Date') {
-									valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
-								} else {
-									valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
-								}
-								visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
-							}
-						}).fail(function(jqXHR, textStatus, errorThrown) {
-							valueEdit.find('form').shake(5,5,800);
-						})
-					}
+					}).fail(function(jqXHR, textStatus, errorThrown) {
+						valueEdit.find('form').shake(5,5,800);
+					})
+					
 				}
 			} 
 		})
@@ -227,15 +204,6 @@
 		  } 
 	});
 	
-	function isValidField(field) {
-		if (typeof field.willValidate !== "undefined") {
-			field.checkValidity();
-			return field.validity.valid;
-		}
-		// Legacy browser, will let server handle the validation so returning true
-		return true;
-	}
-	
 	function addPropMenuitemHandler(e) {
 		e.preventDefault();
 		var propName = $('#propName');
@@ -287,50 +255,26 @@
 			} 
 			else if (action == 'ok') {
 				var $form = $target.closest('form');
-				var isValid = true;
-				var invaldField = null;
-				var fields = $form.find('[required]');
-				if (fields.length) {
-					fields.each(function() {
-						if (!isValidField(this)) {
-							isValid = false;
-							invalidField = this;
-							return false;
-						}
-					})
+				if (!isFormValid($form)) {
+					return;
 				}
-				var $errorMsg = $form.find('.errorMsg');
-				$errorMsg.empty().hide();
-				if (!isValid) {
-					//HTML5 form validation
-					//Safari do not support error message so we just shake it 
-					if (isSafari()) {
-						$(invalidField).closest('.fieldItem').addClass('alert alert-danger').shake(5,5,800);
-						$errorMsg.text("Entry is invalid!").show();
+				$.post($form.attr('action'), $form.serialize())
+				.done(function(data) {
+					var dataHtml = $(data);
+					var status = dataHtml.find('#Status').text();
+					var message = dataHtml.find('#Message').text();
+					if (status == '200' && message == 'OK') {
+						toggleLock();
+						setSessionStorage(SESSION_STORAGE_KEY, {highlight: [$('#addPropModal').data('name')]});
+						window.location.reload(true);
 					}
-					else {
-						valueEdit.find('input[type=submit]').trigger('click');
-					}
-				} else {
-					$.post($form.attr('action'), $form.serialize())
-					.done(function(data) {
-						var dataHtml = $(data);
-						var status = dataHtml.find('#Status').text();
-						var message = dataHtml.find('#Message').text();
-						if (status == '200' && message == 'OK') {
-							toggleLock();
-							setSessionStorage(SESSION_STORAGE_KEY, {highlight: [$('#addPropModal').data('name')]});
-							window.location.reload(true);
-						}
-					}).fail(function(jqXHR, textStatus, errorThrown) {
-						var dataHtml = $(jqXHR.responseText);
-						var status = dataHtml.find('#Status').text();
-						var message = dataHtml.find('#Message').text();
-						
-						$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
-					})
-				}
-				
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					var dataHtml = $(jqXHR.responseText);
+					var status = dataHtml.find('#Status').text();
+					var message = dataHtml.find('#Message').text();
+					
+					$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+				})
 			}
 		}
 	});
