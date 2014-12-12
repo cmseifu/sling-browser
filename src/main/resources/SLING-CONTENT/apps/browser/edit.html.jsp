@@ -10,6 +10,6 @@
 <c:set var="staticRoot" value="/apps/browser/static" scope="request" />
 
 <%-- direct to the corresponding file|properties edit page --%>
-<c:if test="${!empty slingRequest.requestPathInfo.suffix }">
+<c:if test="${!empty slingRequest.requestPathInfo.suffix}">
 	<sling:include path="${slingRequest.requestPathInfo.suffix}" replaceSelectors="edit.${param.editType=='properties' ? 'properties' : 'file'}" resourceType="browser"  replaceSuffix=""/>
 </c:if>
