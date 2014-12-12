@@ -8,9 +8,7 @@ $(document).ready(function() {
 		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
 		$('#logout').on('click', function(e){
 			e.preventDefault();
-			$.post($(this).attr('href'), function() {
-				window.location.reload(true);
-			}).fail(function() {
+			$.post($(this).attr('href'),{ "noCache": "noCache" }).always(function() {
 				window.location.reload(true);
 			})
 		});
