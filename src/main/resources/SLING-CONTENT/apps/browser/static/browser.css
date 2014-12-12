@@ -206,11 +206,11 @@ body.full-screen #small-screen {
 } 
 
 body.lock .screenLock {
-	z-index:100;
+	z-index:1041;
 }
 
 body.lock .col-b {
-	z-index:101;
+	z-index:1042;
 }
 
 #contextMenu li:hover .fa-refresh {

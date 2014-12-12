@@ -24,6 +24,7 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -39,7 +40,6 @@ import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.browser.resource.BrowserResource;
 import org.apache.sling.commons.mime.MimeTypeService;
-
 import org.json.JSONWriter;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
@@ -83,14 +83,15 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 			/* root */
 			path = ROOT_PATH;
 		}
-		if (path != null) {
-			Resource r = request.getResourceResolver().resolve(path);
-			if (!ResourceUtil.isNonExistingResource(r)) {
-				browserResource = new BrowserResource(r);
-			}
+		
+		Resource r = request.getResourceResolver().resolve(path);
+		if (!ResourceUtil.isNonExistingResource(r)) {
+			browserResource = new BrowserResource(r);
 		}
+		
 		if (browserResource == null) {
-			browserResource = new BrowserResource(request.getResourceResolver().resolve(ROOT_PATH));
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 		boolean isModeChildren = false;
 		for (String selector : request.getRequestPathInfo().getSelectors()) {

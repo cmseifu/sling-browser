@@ -147,19 +147,19 @@ $(document).ready(function() {
 		// Expand the tree based on paths
 		function restoreState(paths) {
 			if (paths.length > 0) {
-				var node = browseTree.tree('getNodeById', paths[0]);
-				if (node && node.path) {
-					if (paths.length == 1) {
-						selectNodeByPath(currentPath, false);
-					} else {
-						$.getJSON(REQUEST_PATH+".json"+node.path, function (data) {
-							var newPaths = paths.slice(1);
-			        		browseTree.tree('loadData', data[0].children, node);
-			        		browseTree.tree('openNode', node);
-			        		restoreState(newPaths);
-				        });
-					}
-				} 
+				if (paths.length == 1) {
+					selectNodeByPath(paths[0], false);
+				} else {
+					$.getJSON(REQUEST_PATH+".json"+paths[0], function (data) {
+						var newPaths = paths.slice(1);
+						var node = browseTree.tree('getNodeById', paths[0]);
+		        		browseTree.tree('loadData', data[0].children, node);
+		        		browseTree.tree('openNode', node);
+		        		restoreState(newPaths);
+			        }).fail(function () {
+			        	selectNodeByPath(paths[0], false);
+			        })
+				}
 			} else {
 				selectNodeByPath(currentPath, false);
 			}
@@ -169,6 +169,14 @@ $(document).ready(function() {
 		// Select a node by path
 		function selectNodeByPath(path, storeState) {
 			var node = browseTree.tree('getNodeById', path);
+			if (!node) {
+				var paths = splitPath(path);
+				var l = paths.length-1;
+				var node = browseTree.tree('getNodeById', paths[l]);
+				while (node == null && l > -1) {
+					 node = browseTree.tree('getNodeById', paths[--l]);
+				} 
+			}
 			if (node != null) {
 				browseTree.tree('selectNode', node);
 				updateCurrent(node, storeState);
@@ -327,8 +335,8 @@ $(document).ready(function() {
 			setLocalStorage(STORAGE_KEY,storage);
 		};
 		
-		// When all paths are restored, this event will be fired so we restore the tabs 
-		$('body').on('browser:restoreReady', function () {
+		// When all paths are restored, this event will be fired so we restore user profile information.  This should be done only once.
+		$('body').one('browser:restoreReady', function () {
 				if (storage && storage.tabs) {
 					var tabs = storage.tabs;
 					for (var tab in tabs) {
@@ -346,16 +354,18 @@ $(document).ready(function() {
 		
 		
 		$('#newModal #createBtn').on('click', function(e) {
+			var _self = $(this);
+			// lock submiting
+			
 			var $form = $(this).closest('form');
 			if (!isFormValid($form)) {
 				return;
 			}
 			var treeLi = $('#newModal').data('treeLi');
 			var node = treeLi.data('simpleNode') ;
-			var postUrl = [];
 			var newPath = node.path+'/'+$form.find('#newNodeName').val();
 			var nodeType = $form.find('#nodeTypeSelect').val();
-			var data = {}
+			var data = {};
 			data["jcr:primaryType"] = nodeType;
 			if (nodeType == 'nt:file') {
 				data["jcr:content"] = {
@@ -364,10 +374,13 @@ $(document).ready(function() {
 				     "jcr:mimeType" : "application/octet-stream"
 				}
 			}
-			$.post().fail(function(data) {console.log(data)});
-			
+			if (_self.data('submitting')) {
+				return;
+			}
+			_self.data('submitting',true);
 			$.post(node.path+"?:name="+$form.find('#newNodeName').val()+"&:operation=import&:contentType=json&:content="+encodeURIComponent(JSON.stringify(data)))
 			.done(function(data) {
+				_self.removeData('submitting');
 				var dataHtml = $(data);
 				var status = dataHtml.find('#Status').text();
 				var message = dataHtml.find('#Message').text();
@@ -376,10 +389,12 @@ $(document).ready(function() {
 				}
 				$('#newModal').removeData('treeLi').modal('hide');
 			}).fail(function(jqXHR, textStatus, errorThrown) {
+				_self.removeData('submitting');
 				var dataHtml = $(jqXHR.responseText);
 				var status = dataHtml.find('#Status').text();
 				var message = dataHtml.find('#Message').text();
 				$form.find('.errorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+				
 			});
 			
 		});
