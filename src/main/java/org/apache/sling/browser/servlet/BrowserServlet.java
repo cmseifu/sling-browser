@@ -118,8 +118,11 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 							jsonWriter.key("fileType").value(getSupportedFileType(browserResource.getNode()) );
 							jsonWriter.key("extension").value(mineTypeService.getExtension(browserResource.getNode().getProperty("jcr:content/jcr:mimeType").getString().toLowerCase()));
 						}
-						jsonWriter.key("children");
-						listChildren(browserResource.getChildren().iterator(),jsonWriter, mineTypeService);
+						Iterator<BrowserResource> it = browserResource.getChildren().iterator();
+						if (it.hasNext()) {
+							jsonWriter.key("children");
+							listChildren(it,jsonWriter, mineTypeService);
+						}
 					jsonWriter.endObject();
 				jsonWriter.endArray();
 			}
@@ -130,7 +133,7 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 	}
 
 	private static void listChildren(Iterator<BrowserResource> it, JSONWriter jsonWriter, MimeTypeService mtService) throws RepositoryException {
-		if (it != null && it.hasNext()) {
+		if (it.hasNext()) {
 			jsonWriter.array();
 			while (it.hasNext()) {
 				BrowserResource resource = it.next();
@@ -145,7 +148,9 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 				}
 				if (resource.getSimpleNodeType().equals(JcrConstants.NT_FILE)) {
 					jsonWriter.key("fileType").value(getSupportedFileType(resource.getNode()) );
-					jsonWriter.key("extension").value(mtService.getExtension(resource.getNode().getProperty("jcr:content/jcr:mimeType").getString().toLowerCase()));				}
+					boolean hasMimetype = resource.getNode().hasProperty("jcr:content/jcr:mimeType");
+					jsonWriter.key("extension").value(mtService.getExtension(hasMimetype ? resource.getNode().getProperty("jcr:content/jcr:mimeType").getString() : ""));
+				}
 				if (resource.getChildren().iterator().hasNext()) {
 					jsonWriter.key("load_on_demand").value(true);
 				}
