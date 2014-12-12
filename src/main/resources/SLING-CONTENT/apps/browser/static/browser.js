@@ -109,11 +109,6 @@ $(document).ready(function() {
 			updateCurrent(event.node,true); 
 		});
 		
-		// Bind click to context menu
-		//browseTree.vscontext({menuBlock: 'vs-context-menu', speed: 'fast'});
-		
-		// Show the bootstrap dropdown but hidden inside context menu
-		//$('.vs-context-menu .dropdown-menu').toggle();
 		
 		// Tree initialization
 		browseTree.bind('tree.init', function() { 
@@ -182,22 +177,6 @@ $(document).ready(function() {
 		}
 		
 		
-		// Refresh a node
-		function refreshNode(node, selectPath) {
-			if (!node) return;
-			$.getJSON(REQUEST_PATH+".json"+node.path, { "noCache": "noCache" }, function (data) {
-	        	 browseTree.tree('updateNode',node,{label:data[0].label});
-	        	 if (data[0].children) {
-	        		 browseTree.tree('loadData', data[0].children, node);
-	        	 }
-	        	 if (!selectPath) {
-		        	 browseTree.tree('selectNode', node);
-		        	 updateCurrent(node);
-	        	 } else {
-	        		 selectNodeByPath(selectPath, true);
-	        	 }
-	        });
-		}
 		
 		
 		// Update the breadcrumb
@@ -288,6 +267,8 @@ $(document).ready(function() {
 			if (!tab.length) {
 				if (node.fileType && node.fileType == 'js') {
 					node.fileType = 'javascript';
+				} else if (node.fileType && node.fileType == 'txt') {
+					node.fileType = 'text';
 				}
 				tab = tabTmpl.clone();
 				tab.find('a').attr('href', '#'+node.uuid).data('path',node.path).attr('title',node.path).text(node.name);
@@ -371,8 +352,21 @@ $(document).ready(function() {
 			}
 			var treeLi = $('#newModal').data('treeLi');
 			var node = treeLi.data('simpleNode') ;
+			var postUrl = [];
 			var newPath = node.path+'/'+$form.find('#newNodeName').val();
-			$.post(newPath+'?jcr:primaryType='+$form.find('#nodeTypeSelect').val())
+			var nodeType = $form.find('#nodeTypeSelect').val();
+			var data = {}
+			data["jcr:primaryType"] = nodeType;
+			if (nodeType == 'nt:file') {
+				data["jcr:content"] = {
+				     "jcr:primaryType": "nt:resource",
+				     "jcr:data" : "",
+				     "jcr:mimeType" : "application/octet-stream"
+				}
+			}
+			$.post().fail(function(data) {console.log(data)});
+			
+			$.post(node.path+"?:name="+$form.find('#newNodeName').val()+"&:operation=import&:contentType=json&:content="+encodeURIComponent(JSON.stringify(data)))
 			.done(function(data) {
 				var dataHtml = $(data);
 				var status = dataHtml.find('#Status').text();
@@ -385,10 +379,29 @@ $(document).ready(function() {
 				var dataHtml = $(jqXHR.responseText);
 				var status = dataHtml.find('#Status').text();
 				var message = dataHtml.find('#Message').text();
-				
 				$form.find('.errorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
 			});
-		})
+			
+		});
+		
+		// Refresh a node
+		function refreshNode(node, selectPath) {
+			if (!node) return;
+			$.getJSON(REQUEST_PATH+".json"+node.path, { "noCache": "noCache" }, function (data) {
+	        	 browseTree.tree('updateNode',node,{label:data[0].label});
+	        	 if (data[0].children) {
+	        		 browseTree.tree('loadData', data[0].children, node);
+	        	 }
+	        	 if (!selectPath) {
+		        	 browseTree.tree('selectNode', node);
+		        	 updateCurrent(node);
+	        	 } else {
+	        		 selectNodeByPath(selectPath, true);
+	        	 }
+	        });
+		}
+		
+		
 		
 		browseTree.contextMenu({
 		    menuSelector: "#contextMenu",
@@ -408,22 +421,30 @@ $(document).ready(function() {
 		    				var status = dataHtml.find('#Status').text();
 		    				var message = dataHtml.find('#Message').text();
 		    				if ((status == '200' && message == 'OK')) {
-		    					refreshNode(treeLi.data('node').parent);
+		    					var node = treeLi.data('node');
+		    					var prev = node.getPreviousSibling();
+		    					var parent = node.parent;
+		    					var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
+		    					// remove the node
+		    					browseTree.tree('removeNode', node);
+		    					// select prev or parent
+								refreshNode(prev ? prev : parent);
+								// close any tags if file is opened
+								var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
+								if (tab.length) {
+									tab.find('span').trigger('click');
+								}
 		    				}
-		    			
 		    			}).fail(function(jqXHR, textStatus, errorThrown) {
 		    				var dataHtml = $(jqXHR.responseText);
 		    				var status = dataHtml.find('#Status').text();
 		    				var message = dataHtml.find('#Message').text();
 		    				
-		    				$form.find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
+		    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
 		    			});
-		    			
     				break;
 		    	
 		    	}
-		    		
-		        
 		    }
 		});
 		

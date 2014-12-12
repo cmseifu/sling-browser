@@ -14,6 +14,7 @@
 		<div id="browseTree"></div>
 	</div>
 	<div class="col-b">
+		<div class="alert alert-danger errorMsg" style="display:none"></div>
 		<span id="full-screen" class="glyphicon glyphicon-resize-full" title="full"></span>
 		<span id="small-screen" class="glyphicon glyphicon-resize-small" title="small"></span>
 		<ul id="pageTab" class="nav nav-tabs">
