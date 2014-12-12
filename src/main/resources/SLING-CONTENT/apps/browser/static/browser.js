@@ -350,10 +350,10 @@ $(document).ready(function() {
 			}
 		);
 		
-		
+		$('#new-form').on('submit', function() { return false; });
 		$('#newModal #createBtn').on('click', function(e) {
 			var _self = $(this);
-			// lock submiting
+			
 			
 			var $form = $(this).closest('form');
 			if (!isFormValid($form)) {
@@ -361,17 +361,21 @@ $(document).ready(function() {
 			}
 			var treeLi = $('#newModal').data('treeLi');
 			var node = treeLi.data('simpleNode') ;
+			var nodeTypeSelect = $form.find('#nodeTypeSelect');
 			var newPath = node.path+'/'+$form.find('#newNodeName').val();
-			var nodeType = $form.find('#nodeTypeSelect').val();
+			var selectedIndex = nodeTypeSelect[0].selectedIndex;
+			var isFile = nodeTypeSelect.find('option').eq(selectedIndex).data('file');
+			
 			var data = {};
-			data["jcr:primaryType"] = nodeType;
-			if (nodeType == 'nt:file') {
+			data["jcr:primaryType"] = nodeTypeSelect.val();
+			if (isFile) {
 				data["jcr:content"] = {
 				     "jcr:primaryType": "nt:resource",
 				     "jcr:data" : "",
 				     "jcr:mimeType" : "application/octet-stream"
 				}
 			}
+			// lock submiting
 			if (_self.data('submitting')) {
 				return;
 			}
@@ -428,6 +432,7 @@ $(document).ready(function() {
 		    		case 'refresh' : refreshNode(treeLi.data('node'));
 	    				break;
 		    		case 'delete' : 
+		    			$('body').find('.errorMsg').empty().hide();
 		    			$.post(treeLi.data('simpleNode').path+'?:operation=delete')
 		    			.done(function(data) {
 		    				var dataHtml = $(data);

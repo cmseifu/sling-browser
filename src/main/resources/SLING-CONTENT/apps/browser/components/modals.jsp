@@ -21,9 +21,10 @@
 							NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getPrimaryNodeTypes();
 						%>
 						<select class="form-control" name="jcr:primaryType" id="nodeTypeSelect">
+							<option value="nt:file" data-file="true">nt:file</option>
 							<option value="sling:Folder">sling:Folder</option>
 							<option value="nt:folder">nt:folder</option>
-							<option value="nt:file">nt:file</option>
+							
 							
 							<%
 								while(nodeTypes.hasNext()) { 
@@ -33,7 +34,7 @@
 									continue;
 								}
 							 %>
-							 <option value="<%=nt.getName() %>"><%=nt.getName() %></option>
+							 <option <%=nt.isNodeType("nt:file") ? "data-file=true" : "" %> value="<%=nt.getName() %>"><%=nt.getName() %></option>
 							 <% } %>
 						</select>
 					</div>
