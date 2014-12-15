@@ -48,7 +48,8 @@ nav>button{
 }
 
 nav>button:disabled {
-	background-color:red;
+	background-color:#ddd;
+	color:#999;
 }
 
 .themeSelect {
