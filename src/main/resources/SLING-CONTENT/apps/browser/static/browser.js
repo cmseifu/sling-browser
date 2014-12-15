@@ -21,7 +21,7 @@ $(document).ready(function() {
 		var tabTmpl = $('#tabTmpl').clone().removeAttr('id');
 		var tabContentTmpl = $('#tabContentTmpl').clone().removeAttr('id');
 		
-		/* double click on tab gives full screen */
+		/* click on tab gives full screen */
 		$('#full-screen, #small-screen').on('click', function(e) {
 			$('body').toggleClass('full-screen');
 		})
@@ -97,8 +97,7 @@ $(document).ready(function() {
 				}
 			},
 			onLoadFailed: function() {
-				//checkEmptyContent();
-				//clearCursorWait();
+				
 			}
 		});
 		
@@ -292,13 +291,14 @@ $(document).ready(function() {
 					  }
 				});
 				pageTab.append(tab);
+				
 				var tabContent = tabContentTmpl.clone();
 				tabContent.attr('id',node.uuid);
 				pageTabContent.append(tabContent);
 				storage.tabs[node.uuid] = node;
 				setLocalStorage(STORAGE_KEY, storage);
 			}
-			// If selected not specified or selected = true
+			// If selected is not specified or selected = true
 			if (!arguments[1] || selected) {
 				tab.find('a').trigger('click');
 			}
@@ -353,7 +353,6 @@ $(document).ready(function() {
 		$('#new-form').on('submit', function() { return false; });
 		$('#newModal #createBtn').on('click', function(e) {
 			var _self = $(this);
-			
 			
 			var $form = $(this).closest('form');
 			if (!isFormValid($form)) {
@@ -460,7 +459,55 @@ $(document).ready(function() {
 		    				
 		    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
 		    			});
-    				break;
+		    			break;
+		    		case 'copy' : 
+		    			$('#contextMenu').data('clipboard', treeLi.data('node'));
+		    			break;
+		    		case 'paste' : 
+		    			var clipboardNode = $('#contextMenu').data('clipboard');
+		    			if (!clipboardNode) {
+		    				alert('nothing on clipbaord')
+		    			} else {
+		    				$.post(clipboardNode.path+'?:operation=copy&:dest='+treeLi.data('node').path+'/')
+			    			.done(function(data) {
+			    				var dataHtml = $(data);
+			    				var status = dataHtml.find('#Status').text();
+			    				var message = dataHtml.find('#Message').text();
+			    				if (status.indexOf('20') == 0) { // Ok
+			    					refreshNode(treeLi.data('node'));
+			    				}
+			    			}).fail(function(jqXHR, textStatus, errorThrown) {
+			    				var dataHtml = $(jqXHR.responseText);
+			    				var status = dataHtml.find('#Status').text();
+			    				var message = dataHtml.find('#Message').text();
+			    				
+			    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
+			    			});
+		    			}
+		    			break;
+		    		case 'move' : 
+		    			var clipboardNode = $('#contextMenu').data('clipboard');
+		    			if (!clipboardNode) {
+		    				alert('nothing on clipbaord')
+		    			} else {
+		    				$.post(clipboardNode.path+'?:operation=move&:dest='+treeLi.data('node').path+'/')
+			    			.done(function(data) {
+			    				var dataHtml = $(data);
+			    				var status = dataHtml.find('#Status').text();
+			    				var message = dataHtml.find('#Message').text();
+			    				if (status.indexOf('20') == 0) { // Ok
+			    					refreshNode(treeLi.data('node'));
+			    				}
+			    			}).fail(function(jqXHR, textStatus, errorThrown) {
+			    				var dataHtml = $(jqXHR.responseText);
+			    				var status = dataHtml.find('#Status').text();
+			    				var message = dataHtml.find('#Message').text();
+			    				
+			    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
+			    			});
+		    				
+		    			}
+		    			break;
 		    	
 		    	}
 		    }
