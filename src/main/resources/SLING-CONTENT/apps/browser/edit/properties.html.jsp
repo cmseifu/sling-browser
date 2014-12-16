@@ -135,7 +135,7 @@ body.lock .screenLock {
 	clear:right;
 	vertical-align:middle;
 	margin-right: 5px;
-background-color: aliceblue;
+	background-color: aliceblue;
 }
 
 .glyphicon-remove-circle {

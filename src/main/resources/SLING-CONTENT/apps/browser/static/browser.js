@@ -1,6 +1,7 @@
 var STORAGE_KEY = slingUserId+'-browser';
 
 $(document).ready(function() {
+		// User profile on browser localStorage
 		var storage = getJsonLocalStorage(STORAGE_KEY);
 		if (!storage) {
 			storage = {tabs:{}};
@@ -12,7 +13,7 @@ $(document).ready(function() {
 				window.location.reload(true);
 			})
 		});
-		// Global var refrences
+		// Global var references
 		var browseTree = $('#browseTree');
 		var viewPanel = $('#viewPanel');
 		var pageTab = $('#pageTab');
@@ -21,7 +22,7 @@ $(document).ready(function() {
 		var tabTmpl = $('#tabTmpl').clone().removeAttr('id');
 		var tabContentTmpl = $('#tabContentTmpl').clone().removeAttr('id');
 		
-		/* click on tab gives full screen */
+		/* click on the icon toggles full screen */
 		$('#full-screen, #small-screen').on('click', function(e) {
 			$('body').toggleClass('full-screen');
 		})
@@ -34,14 +35,14 @@ $(document).ready(function() {
 			currentPath = ROOT_PATH;
 		}
 		
-		
+		// Open file in a tab
 		var fileOpenHandler = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 			addTab($(this).data('simpleNode'));
 		}
 		
-		
+		// Tree configuration
 		browseTree.tree({
 			autoEscape : false,
 			slide: true,
@@ -129,6 +130,7 @@ $(document).ready(function() {
 			}
 		}
 		
+		// Split path
 		function splitPath(path) {
 			var paths = path.split('/');
 			var tmpout = [];
@@ -180,10 +182,7 @@ $(document).ready(function() {
 			}
 			$('body').trigger('browser:restoreReady');
 		}
-		
-		
-		
-		
+
 		// Update the breadcrumb
 		function updateNav(path) {
 			var prefix = "/";
@@ -267,6 +266,7 @@ $(document).ready(function() {
 			history.pushState(node.path, node.path, "/browser.html"+node.path);
 		}
 
+		// Adding a new tab when opening a file
 		function addTab(node, selected) {
 			var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 			if (!tab.length) {
@@ -304,6 +304,7 @@ $(document).ready(function() {
 			}
 		}
 		
+		// Remove tab
 		var removeTabHandler = function(e) {
 			var _self = $(this);
 			var tabId = _self.prev().attr('href');
@@ -326,7 +327,7 @@ $(document).ready(function() {
 			}
 		};
 		
-		// Store the last active tab index
+		// Before the browser window close or refresh, store the last active tab index
 		window.onbeforeunload = function(e) {
 			var activeTabIndex = $('#pageTab li.active').index();
 			storage.activeTabIndex = activeTabIndex;
@@ -350,6 +351,7 @@ $(document).ready(function() {
 			}
 		);
 		
+		// Disable submit on new-form as it's done by AJAX
 		$('#new-form').on('submit', function() { return false; });
 		$('#newModal #createBtn').on('click', function(e) {
 			var _self = $(this);
@@ -394,7 +396,7 @@ $(document).ready(function() {
 				var dataHtml = $(jqXHR.responseText);
 				var status = dataHtml.find('#Status').text();
 				var message = dataHtml.find('#Message').text();
-				$form.find('.errorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+				$form.find('.errorMsg').text(status+": Error saving <strong>"+node.path+"</strong> caused by "+message).show();
 				
 			});
 			
@@ -418,12 +420,14 @@ $(document).ready(function() {
 		}
 		
 		
-		
+		// Context menu for different actions
 		browseTree.contextMenu({
 		    menuSelector: "#contextMenu",
 		    menuSelected: function (invokedOn, selectedMenu) {
-		    	var action = selectedMenu.closest('li').data('action');
-		    	if (!action) return;
+		    	var menuLi = selectedMenu.closest('li');
+		    	var action = menuLi.data('action');
+		    	if (!action || menuLi.is('.disabled') ) return false;
+		    	$('body').find('.errorMsg').empty().hide();
 		    	var treeLi = invokedOn.closest('li');
 		    	switch (action) {
 		    		case 'add' : $('#newModal').data('treeLi', treeLi).modal('show'); 
@@ -431,7 +435,6 @@ $(document).ready(function() {
 		    		case 'refresh' : refreshNode(treeLi.data('node'));
 	    				break;
 		    		case 'delete' : 
-		    			$('body').find('.errorMsg').empty().hide();
 		    			$.post(treeLi.data('simpleNode').path+'?:operation=delete')
 		    			.done(function(data) {
 		    				var dataHtml = $(data);
@@ -441,12 +444,11 @@ $(document).ready(function() {
 		    					var node = treeLi.data('node');
 		    					var prev = node.getPreviousSibling();
 		    					var parent = node.parent;
-		    					var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 		    					// remove the node
 		    					browseTree.tree('removeNode', node);
 		    					// select prev or parent
 								refreshNode(prev ? prev : parent);
-								// close any tags if file is opened
+								// close the tab if file is opened
 								var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 								if (tab.length) {
 									tab.find('span').trigger('click');
@@ -457,56 +459,64 @@ $(document).ready(function() {
 		    				var status = dataHtml.find('#Status').text();
 		    				var message = dataHtml.find('#Message').text();
 		    				
-		    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
+		    				$('#mainErrorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
 		    			});
 		    			break;
 		    		case 'copy' : 
-		    			$('#contextMenu').data('clipboard', treeLi.data('node'));
+		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').toggleClass('disabled');
 		    			break;
 		    		case 'paste' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
-		    			if (!clipboardNode) {
-		    				alert('nothing on clipbaord')
-		    			} else {
-		    				$.post(clipboardNode.path+'?:operation=copy&:dest='+treeLi.data('node').path+'/')
-			    			.done(function(data) {
-			    				var dataHtml = $(data);
-			    				var status = dataHtml.find('#Status').text();
-			    				var message = dataHtml.find('#Message').text();
-			    				if (status.indexOf('20') == 0) { // Ok
-			    					refreshNode(treeLi.data('node'));
-			    				}
-			    			}).fail(function(jqXHR, textStatus, errorThrown) {
-			    				var dataHtml = $(jqXHR.responseText);
-			    				var status = dataHtml.find('#Status').text();
-			    				var message = dataHtml.find('#Message').text();
-			    				
-			    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
-			    			});
-		    			}
+	    				$.post(clipboardNode.path+'?:operation=copy&:dest='+treeLi.data('node').path+'/')
+		    			.done(function(data) {
+		    				var dataHtml = $(data);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				if (status.indexOf('20') == 0) { // Ok
+		    					refreshNode(treeLi.data('node'));
+		    				}
+		    			}).fail(function(jqXHR, textStatus, errorThrown) {
+		    				var dataHtml = $(jqXHR.responseText);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				
+		    				$('#mainErrorMsg').text(status+": Error pasting <strong>"+clipboardNode.path+"</strong> to  <strong>"+treeLi.data('node').path+"</strong> caused by "+message).show()
+		    			});
+		    			
 		    			break;
 		    		case 'move' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
-		    			if (!clipboardNode) {
-		    				alert('nothing on clipbaord')
-		    			} else {
-		    				$.post(clipboardNode.path+'?:operation=move&:dest='+treeLi.data('node').path+'/')
-			    			.done(function(data) {
-			    				var dataHtml = $(data);
-			    				var status = dataHtml.find('#Status').text();
-			    				var message = dataHtml.find('#Message').text();
-			    				if (status.indexOf('20') == 0) { // Ok
-			    					refreshNode(treeLi.data('node'));
-			    				}
-			    			}).fail(function(jqXHR, textStatus, errorThrown) {
-			    				var dataHtml = $(jqXHR.responseText);
-			    				var status = dataHtml.find('#Status').text();
-			    				var message = dataHtml.find('#Message').text();
-			    				
-			    				$('body').find('.errorMsg').text(status+": Error deleting <strong>"+resourcePath+"</strong> caused by "+message).show();
-			    			});
-		    				
-		    			}
+	    				$.post(clipboardNode.path+'?:operation=move&:dest='+treeLi.data('node').path+'/')
+		    			.done(function(data) {
+		    				var dataHtml = $(data);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				if (status.indexOf('20') == 0) { // Ok
+		    					// Remove the item from clipboard
+		    					$('#contextMenu').removeData('clipboard');
+		    					// Disabled other actions
+		    					$('#contextMenu').find('.clipboardOnly').toggleClass('disabled');
+		    					// Capture the moveTo node as it goes away after removeNode method.
+		    					var node = treeLi.data('node');
+		    					// remove the movedNode
+		    					browseTree.tree('removeNode', clipboardNode);
+		    					// Refresh the captured node
+		    					refreshNode(node)
+								// close any tab if node is file and opened
+								var tab = pageTab.find('a[href=#'+clipboardNode.uuid+']').parent();
+								if (tab.length) {
+									tab.find('span').trigger('click');
+								}
+		    				}
+		    			}).fail(function(jqXHR, textStatus, errorThrown) {
+		    				var dataHtml = $(jqXHR.responseText);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				$('#mainErrorMsg').text(status+": Error moving <strong>"+clipboardNode.path+"</strong> to  <strong>"+treeLi.data('node').path+"</strong> caused by "+message).show();
+		    			});
+		    			
+		    			break;
+		    		case 'rename' : 
 		    			break;
 		    	
 		    	}

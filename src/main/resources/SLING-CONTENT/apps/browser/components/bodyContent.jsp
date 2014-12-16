@@ -14,7 +14,7 @@
 		<div id="browseTree"></div>
 	</div>
 	<div class="col-b">
-		<div class="alert alert-danger errorMsg" style="display:none"></div>
+		<div id="mainErrorMsg" class="alert alert-danger errorMsg" style="display:none"></div>
 		<span id="full-screen" class="glyphicon glyphicon-resize-full" title="full"></span>
 		<span id="small-screen" class="glyphicon glyphicon-resize-small" title="small"></span>
 		<ul id="pageTab" class="nav nav-tabs">
@@ -32,17 +32,15 @@
 
 <div class="screenLock"></div>
 <ul id="contextMenu" class="dropdown-menu" role="menu" style="display:none" >
-	<li data-action="refresh"><a tabindex="-1" href="#"><span class="fa fa-refresh" title="add child"></span> Refresh</a></li>
+	<li data-action="refresh"><a tabindex="-1" href="#"><span class="fa fa-refresh" title=""></span> Refresh</a></li>
 	<li class="divider"></li>
-    <li data-action="add"><a tabindex="-1" href="#"><span class="fa fa-plus-circle" title="add child"></span> Add</a></li>
-    <li data-action="delete"><a tabindex="-1" href="#"><span class="fa fa-trash" title="delete node"></span> Delete</a></li>
+    <li data-action="add"><a tabindex="-1" href="#"><span class="fa fa-plus-circle" title=""></span> Add</a></li>
+    <li data-action="delete"><a tabindex="-1" href="#"><span class="fa fa-trash" title=""></span> Delete</a></li>
     <li class="divider"></li>
-    <li data-action="copy"><a tabindex="-1" href="#"><span class="fa fa-copy" title="delete node"></span> Copy</a></li>
-    <li data-action="paste"><a tabindex="-1" href="#"><span class="fa fa-paste" title="delete node"></span> Paste</a></li>
-    <!-- 
-    <li><a tabindex="-1" href="#"><span class="fa fa-arrows" title="delete node"></span> Move...</a></li>
-     -->
-    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title="delete node"></span> Rename</a></li>
+    <li data-action="copy"><a tabindex="-1" href="#"><span class="fa fa-copy" title=""></span> Copy</a></li>
+    <li class="clipboardOnly disabled" data-action="paste"><a tabindex="-1" href="#"><span class="fa fa-paste" title=""></span> Paste</a></li>
+    <li class="clipboardOnly disabled" data-action="move"><a tabindex="-1" href="#"><span class="fa fa-arrows" title=""></span> Move</a></li>
+    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a></li>
     <li class="divider"></li>
 </ul>
 

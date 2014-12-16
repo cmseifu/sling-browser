@@ -24,8 +24,6 @@
 							<option value="nt:file" data-file="true">nt:file</option>
 							<option value="sling:Folder">sling:Folder</option>
 							<option value="nt:folder">nt:folder</option>
-							
-							
 							<%
 								while(nodeTypes.hasNext()) { 
 								NodeType nt = nodeTypes.nextNodeType();
