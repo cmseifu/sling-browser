@@ -46,12 +46,46 @@
  	opacity:0.6;
  }
  
+ 
+.value-edit {
+	display:none;
+	background-color: rgba(255, 255, 255, 0.90);
+	border: 1px solid #999;
+	box-shadow: 3px 5px 20px 2px #ddd;
+	box-sizing: border-box;
+	border-radius: 5px;
+	padding:5px;
+	width:100%;
+}
+
+
+.value-edit:before {
+	content: attr(title);
+	display: inline-block;
+	font-weight:bold;
+	font-size:1.1em;
+	color: #476C8A;
+}
+ 
+ 
  .editing {
  	-webkit-user-select:none;
  	user-select:none;
  }
+ 
  .editing .value-edit {
  	display:block;
+ 	position:static;
+ }
+ 
+ .editing .editPanel {
+ 	position:fixed;
+ 	z-index:101;
+ 	width:50%;
+ }
+ .editing .value-edit {
+ 	display:block;
+ 	position:static;
  }
  .editing .value-display {
  	display:none;
@@ -81,10 +115,6 @@
 
 body.lock .screenLock {
 	z-index:100;
-}
-
-body.lock .value-edit {
-	z-index:101;
 }
 
 .glyphicon {
@@ -131,27 +161,6 @@ background-color: aliceblue;
 	padding:3px;
 }
 
-
-.value-edit {
-	display:none;
-	background-color: rgba(255, 255, 255, 0.90);
-	border: 1px solid #999;
-	box-shadow: 3px 5px 20px 2px #ddd;
-	box-sizing: border-box;
-	border-radius: 5px;
-	padding:5px;
-	width:100%;
-}
-
-
-
-.value-edit:before {
-	content: attr(title);
-	display: inline-block;
-	font-weight:bold;
-	font-size:1.1em;
-	color: #476C8A;
-}
 
 
 .clear {
@@ -395,7 +404,7 @@ input[type=submit] {
 				<tr class="<%=readonlyClass%> alert" data-name="<%=name%>" data-type="<%=propertyType %>" data-multiple="<%=p.isMultiple() %>" >
 					<td><%=name%></td>
 					<td><%=propertyType %><%= propertyDefinition.isMultiple()?"[]": "" %></td>
-					<td>
+					<td class="editPanel">
 						<div class="value-display"><%= StringUtils.join(values,", ") %></div>
 						<div class="value-edit" title="<%=name%>">
 							<% for (String value:values) { %>

@@ -33,11 +33,6 @@
 			_self.data('formRendered',true);
 			createEditPanel(_self);
 		}
-		if (_self.is('.editing')) {
-			var valueEdit = _self.find('.value-edit')
-			var clientRect = valueEdit[0].getBoundingClientRect();
-			valueEdit.css({position:'fixed',width:clientRect.width , left:clientRect.left, top:clientRect.top});
-		}
 	})
 	// JCR PropertyDefinition String,Date,Binary,Double,Long,Boolean,Name,Path,Reference,Undefined
 	
