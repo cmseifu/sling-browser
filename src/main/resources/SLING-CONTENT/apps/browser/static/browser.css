@@ -245,6 +245,16 @@ body.lock .col-b {
 	color:orange;
 }
 
+#contextMenu li.disabled>a {
+	color:#eeeeee;
+}
+
+#contextMenu li.disabled:hover .fa-paste, #contextMenu li.disabled:hover .fa-arrows {
+    color:#eeeeee;
+}
+
+
+
 #newNodeName {
 	width:49%;
 	float:left;
