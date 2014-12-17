@@ -463,7 +463,7 @@ $(document).ready(function() {
 		    			});
 		    			break;
 		    		case 'copy' : 
-		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').toggleClass('disabled');
+		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').removeClass('disabled');
 		    			break;
 		    		case 'paste' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
@@ -495,7 +495,7 @@ $(document).ready(function() {
 		    					// Remove the item from clipboard
 		    					$('#contextMenu').removeData('clipboard');
 		    					// Disabled other actions
-		    					$('#contextMenu').find('.clipboardOnly').toggleClass('disabled');
+		    					$('#contextMenu').find('.clipboardOnly').addClass('disabled');
 		    					// Capture the moveTo node as it goes away after removeNode method.
 		    					var node = treeLi.data('node');
 		    					// remove the movedNode
