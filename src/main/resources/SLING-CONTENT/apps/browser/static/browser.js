@@ -92,6 +92,7 @@ $(document).ready(function() {
 					supportedFileType : node.supportedFileType
 				}
 				$li.data('node', node);
+				$li.attr('data-path', node.path)
 				$li.data('simpleNode', simpleNode);
 		    },
 			dataUrl : function (node) { 
@@ -424,7 +425,7 @@ $(document).ready(function() {
 		}
 		
 		
-		// Context menu for different actions
+		// Context menu actions
 		browseTree.contextMenu({
 		    menuSelector: "#contextMenu",
 		    menuSelected: function (invokedOn, selectedMenu) {
@@ -467,11 +468,14 @@ $(document).ready(function() {
 		    			});
 		    			break;
 		    		case 'copy' : 
-		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').toggleClass('disabled');
+		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').removeClass('disabled');
 		    			break;
 		    		case 'paste' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
-	    				$.post(clipboardNode.path+'?:operation=copy&:dest='+treeLi.data('node').path+'/')
+		    			var newPath = treeLi.data('node').path+'/'+ clipboardNode.name;
+		    			
+		    			
+	    				$.post(clipboardNode.path+'?:operation=copy&:replace=false&:dest='+treeLi.data('node').path+'/')
 		    			.done(function(data) {
 		    				var dataHtml = $(data);
 		    				var status = dataHtml.find('#Status').text();
@@ -499,7 +503,7 @@ $(document).ready(function() {
 		    					// Remove the item from clipboard
 		    					$('#contextMenu').removeData('clipboard');
 		    					// Disabled other actions
-		    					$('#contextMenu').find('.clipboardOnly').toggleClass('disabled');
+		    					$('#contextMenu').find('.clipboardOnly').addClass('disabled');
 		    					// Capture the moveTo node as it goes away after removeNode method.
 		    					var node = treeLi.data('node');
 		    					// remove the movedNode
@@ -521,12 +525,15 @@ $(document).ready(function() {
 		    			
 		    			break;
 		    		case 'rename' : 
+		    			$('#contextMenu').show().find('.renameItem').show().find('input').val(treeLi.data('node').name).focus();
 		    			break;
 		    	
 		    	}
 		    }
-		});
-		
+		}).on('contextmenu', function() {
+			// Hide the rename form field unless rename is clicked
+			$('#contextMenu .renameItem').hide();
+		})
 		
 
 	});

@@ -213,6 +213,10 @@ body.lock .col-b {
 	z-index:1042;
 }
 
+#contextMenu>li {
+	position:relative;
+}
+
 #contextMenu li:hover .fa-refresh {
 	color:cadetblue;
 }
@@ -264,5 +268,11 @@ body.lock .col-b {
 	width:49%;
 	float:right;
 }
-	
+
+.renameItem {
+	display:none;
+	position:absolute;
+	left:100px;
+	top:0px;
+}
 

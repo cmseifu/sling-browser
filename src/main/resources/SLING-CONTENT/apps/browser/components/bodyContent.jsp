@@ -40,7 +40,11 @@
     <li data-action="copy"><a tabindex="-1" href="#"><span class="fa fa-copy" title=""></span> Copy</a></li>
     <li class="clipboardOnly disabled" data-action="paste"><a tabindex="-1" href="#"><span class="fa fa-paste" title=""></span> Paste</a></li>
     <li class="clipboardOnly disabled" data-action="move"><a tabindex="-1" href="#"><span class="fa fa-arrows" title=""></span> Move</a></li>
-    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a></li>
+    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a>
+	    <div class="renameItem">
+	    	<input type="text" id="itemRename" name="itemRename" value="" />
+	    </div>
+    </li>
     <li class="divider"></li>
 </ul>
 
