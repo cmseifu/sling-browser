@@ -30,6 +30,10 @@
  .table>thead>tr>th {
  	border-top:none;
  }
+ 
+ tr.alert:not(.readonly):hover {
+ 	background-color:#fffae6;
+ }
  .container {
  	margin-right: 0;
 	margin-left: 0;
@@ -79,7 +83,7 @@
  }
  
  .editing .editPanel {
- 	position:fixed;
+ 	position:absolute;
  	z-index:101;
  	width:50%;
  }

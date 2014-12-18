@@ -6,7 +6,7 @@ $(document).ready(function() {
 		if (!storage) {
 			storage = {tabs:{}};
 		} 
-		var IMAGE_EXTS = ['png','jpe','jpeg','jpg','gif']
+		var IMAGE_TYPES = ['image/gif','image/jpeg','image/pjpeg','image/png','image/svg+xml', 'image/tiff'];
 		$('#logout').on('click', function(e){
 			e.preventDefault();
 			$.post($(this).attr('href'),{ "noCache": "noCache" }).always(function() {
@@ -57,13 +57,16 @@ $(document).ready(function() {
 				var styleClass = 'unstructured';
 				var canOpen = false;
 				switch (node.nodeType) {
-					case 'nt:folder' : icon = 'folder-close';styleClass='folder';break;
+					case 'nt:folder' : 
+						icon = 'folder-close';styleClass='folder';
+						break;
 					case 'nt:file' : 
-						if (node.fileType) {
+						if (node.supportedFileType) {
 							icon="pencil";
 							node.openType = 'editor';
 							canOpen=true;
-						} else if (IMAGE_EXTS.indexOf(node.extension)!=-1) {
+						} 
+						else if (IMAGE_TYPES.indexOf(node.mimeType)!=-1) {
 							icon="camera";
 							node.openType = 'image'
 							canOpen=true;
@@ -84,8 +87,9 @@ $(document).ready(function() {
 					canOpen : node.canOpen,
 					nodeType : node.nodeType,
 					openType : node.openType,
+					extension : node.extension,
 					uuid: node.uuid,
-					fileType : node.fileType
+					supportedFileType : node.supportedFileType
 				}
 				$li.data('node', node);
 				$li.data('simpleNode', simpleNode);
@@ -270,10 +274,10 @@ $(document).ready(function() {
 		function addTab(node, selected) {
 			var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
 			if (!tab.length) {
-				if (node.fileType && node.fileType == 'js') {
-					node.fileType = 'javascript';
-				} else if (node.fileType && node.fileType == 'txt') {
-					node.fileType = 'text';
+				if (node.supportedFileType == 'js') {
+					node.supportedFileType = 'javascript';
+				} else if (node.supportedFileType == 'txt') {
+					node.supportedFileType = 'text';
 				}
 				tab = tabTmpl.clone();
 				tab.find('a').attr('href', '#'+node.uuid).data('path',node.path).attr('title',node.path).text(node.name);
@@ -286,7 +290,7 @@ $(document).ready(function() {
 						  if (node.openType == 'image') {
 							 tabContent.html('<img src="'+node.path+'"/>');
 						  } else {
-							 tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&fileType='+node.fileType+'"></iframe>');
+							 tabContent.html('<iframe style="border:0px;width:100%;height:100%" src="/browser.edit.html'+node.path+'?editType=file&supportedFileType='+node.supportedFileType+'"></iframe>');
 						  }
 					  }
 				});
@@ -463,7 +467,7 @@ $(document).ready(function() {
 		    			});
 		    			break;
 		    		case 'copy' : 
-		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').removeClass('disabled');
+		    			$('#contextMenu').data('clipboard', treeLi.data('node')).find('.clipboardOnly').toggleClass('disabled');
 		    			break;
 		    		case 'paste' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
@@ -495,7 +499,7 @@ $(document).ready(function() {
 		    					// Remove the item from clipboard
 		    					$('#contextMenu').removeData('clipboard');
 		    					// Disabled other actions
-		    					$('#contextMenu').find('.clipboardOnly').addClass('disabled');
+		    					$('#contextMenu').find('.clipboardOnly').toggleClass('disabled');
 		    					// Capture the moveTo node as it goes away after removeNode method.
 		    					var node = treeLi.data('node');
 		    					// remove the movedNode

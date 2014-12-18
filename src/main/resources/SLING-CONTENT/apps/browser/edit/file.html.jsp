@@ -125,17 +125,17 @@ nav>button:disabled {
 	</nav>
 </form>
 	<div id="editor"><c:out value="<%=currentNode.getProperty("jcr:content/jcr:data").getString() %>" escapeXml="true" /></div>
-	<form method="POST" id="updateForm" 
+	<form method="post" id="updateForm" 
 		action="${currentNode.path}/_jcr_content"
-		ENCTYPE="MULTIPART/FORM-DATA">
-		<input type="hidden" name=":redirect" value="${slingRequest.requestURL}?fileType=${param.fileType}&editType=${param.editType}" />
+		enctype="multipart/form-data">
+		<input type="hidden" name=":redirect" value="${slingRequest.requestURL}?supportedFileType=${param.supportedFileType}&editType=${param.editType}" />
 		<input type="hidden" name="jcr:data" value="" id="jcrData"/>
 	</form>
 
 	<script>
 		var resourcePath = "${resource.path}";
 		var slingUserId = "${slingRequest.resourceResolver.userID}";
-		var aceMode = "ace/mode/${param.fileType}";
+		var aceMode = "ace/mode/${param.supportedFileType}";
 		
 	</script>
 	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
