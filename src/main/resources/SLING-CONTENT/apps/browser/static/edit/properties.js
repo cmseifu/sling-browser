@@ -114,11 +114,11 @@
 						var message = dataHtml.find('#Message').text();
 						if (status == '200' && message == 'OK') {
 							if (type == 'Boolean') {
-								valueEdit.prev().text($form.find('[name='+name+']')[0].checked);
+								valueEdit.prev().text($form.find('[name=\''+name+'\']')[0].checked);
 							} if (type == 'Date') {
-								valueEdit.prev().text($form.find('[name='+name+']').val() + 'T00:00:00.000-05:00');
+								valueEdit.prev().text($form.find('[name=\''+name+'\']').val() + 'T00:00:00.000-05:00');
 							} else {
-								valueEdit.prev().text($form.find('[name='+name+']').map(function() {return this.value }).get().join(', '));
+								valueEdit.prev().text($form.find('[name=\''+name+'\']').map(function() {return this.value }).get().join(', '));
 							}
 							visualUpdate(valueEdit.closest('tr').trigger('dblclick'));
 						}
