@@ -269,8 +269,12 @@ body.lock .col-b {
 	float:right;
 }
 
+/* secret form submit */
+input[type=submit] {
+	visibility: hidden;display:none;
+}
+
 .renameItem {
-	display:none;
 	position:absolute;
 	left:100px;
 	top:0px;

@@ -525,14 +525,51 @@ $(document).ready(function() {
 		    			
 		    			break;
 		    		case 'rename' : 
-		    			$('#contextMenu').show().find('.renameItem').show().find('input').val(treeLi.data('node').name).focus();
+		    			$('#renameForm').data('node', treeLi.data('node'));
+		    			$('#contextMenu').show().find('.renameItem').removeClass('hide').find('input[name=itemRename]').val(treeLi.data('node').name).focus();
 		    			break;
 		    	
 		    	}
 		    }
 		}).on('contextmenu', function() {
 			// Hide the rename form field unless rename is clicked
-			$('#contextMenu .renameItem').hide();
+			$('#contextMenu .renameItem').addClass('hide');
+		})
+		
+		$('#renameForm').bind('submit', function(e) {
+			e.preventDefault();
+			var _self = $(this);
+			if (isFormValid(_self)) {
+				var node =_self.data('node');
+				if (node.parent) {
+					var newName = _self.find('input[name=itemRename]').val();
+					$.post(node.path+'?:operation=move&:dest='+node.parent.path+'/'+newName)
+	    			.done(function(data) {
+	    				var dataHtml = $(data);
+	    				var status = dataHtml.find('#Status').text();
+	    				var message = dataHtml.find('#Message').text();
+	    				if (status.indexOf('20') == 0) { // Ok
+	    					var parentNode = node.parent;
+	    					// remove the movedNode
+	    					browseTree.tree('removeNode', node);
+	    					// Refresh the captured node
+	    					refreshNode(parentNode, parentNode.path+'/'+newName);
+							// close any tab if node is file and opened
+							var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
+							if (tab.length) {
+								tab.find('span').trigger('click');
+							}
+	    				}
+	    			}).fail(function(jqXHR, textStatus, errorThrown) {
+	    				var dataHtml = $(jqXHR.responseText);
+	    				var status = dataHtml.find('#Status').text();
+	    				var message = dataHtml.find('#Message').text();
+	    				$('#mainErrorMsg').text(status+": Error renaming <strong>"+node.name+"</strong> to  <strong>"+newName+"</strong> caused by "+message).show();
+	    			});
+	    			$('#contextMenu').hide();
+				}
+			}
+			return false;
 		})
 		
 
