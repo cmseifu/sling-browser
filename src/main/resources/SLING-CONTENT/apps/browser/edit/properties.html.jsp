@@ -326,7 +326,7 @@ body.lock .mixinContainer.editing {
 
 /* secret form submit */
 input[type=submit] {
-	visibility: hidden;display:none
+	visibility: hidden;display:none;
 }
 
  </style>
