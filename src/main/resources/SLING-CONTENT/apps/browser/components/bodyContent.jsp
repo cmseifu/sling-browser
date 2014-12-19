@@ -41,7 +41,7 @@
      <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a>
 	    <div class="renameItem hide">
 	    	<form id="renameForm"  method="post" action="" enctype="multipart/form-data">
-		    	<input type="text" id="itemRename" name="itemRename" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" value="" />
+		    	<input type="text" id="itemRename" name="itemRename" required pattern="[\w\:\.]+" value="" />
 				<input type="submit" />
 			</form>
 	    </div>
