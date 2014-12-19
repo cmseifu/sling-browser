@@ -112,14 +112,18 @@ function isFormValid($form) {
 		})
 	}
 	var $errorMsg = $form.find('.errorMsg');
-	$errorMsg.empty().hide();
+	if ($errorMsg.length) {
+		$errorMsg.empty().hide();
+	}
 	if (!isValid) {
 		//HTML5 form validation
 		//Safari do not support error message so we just shake it 
 		if (isSafari()) {
 			$(invalidField).addClass('alert alert-danger').shake(5,5,800);
 			$(invalidField).one('focus', function() { $(this).removeClass('alert alert-danger')});
-			$errorMsg.text("Entry is invalid!").show();
+			if ($errorMsg.length) {
+				$errorMsg.text("Entry is invalid!").show();
+			}
 		}
 		else {
 			$form.find('input[type=submit]').trigger('click');
