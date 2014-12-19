@@ -38,11 +38,10 @@
     <li data-action="delete"><a tabindex="-1" href="#"><span class="fa fa-trash" title=""></span> Delete</a></li>
     <li class="divider"></li>
     <li data-action="copy"><a tabindex="-1" href="#"><span class="fa fa-copy" title=""></span> Copy</a></li>
-     <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a>
+    <li data-action="rename"><a tabindex="-1" href="#"><span class="fa fa-wrench" title=""></span> Rename</a>
 	    <div class="renameItem hide">
 	    	<form id="renameForm"  method="post" action="" enctype="multipart/form-data">
-		    	<input type="text" id="itemRename" name="itemRename" required pattern="[\w\:\.]+" value="" />
-				<input type="submit" />
+		    	<input type="text" id="renameTo" name="renameTo" required pattern="[\w\:\.]+" value="" />
 			</form>
 	    </div>
     </li>

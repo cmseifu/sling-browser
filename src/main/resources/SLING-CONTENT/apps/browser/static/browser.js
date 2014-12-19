@@ -525,8 +525,19 @@ $(document).ready(function() {
 		    			
 		    			break;
 		    		case 'rename' : 
-		    			$('#renameForm').data('node', treeLi.data('node'));
-		    			$('#contextMenu').show().find('.renameItem').removeClass('hide').find('input[name=itemRename]').val(treeLi.data('node').name).focus();
+		    			var renameItem = $('#contextMenu .renameItem');
+		    			var renameTo = renameItem.find('input[name=renameTo]');
+		    			$('#contextMenu').show();
+		    			if (renameItem.is('.hide')) {
+			    			$('#renameForm').data('node', treeLi.data('node'));
+			    			renameItem.removeClass('hide')
+			    			renameTo.val(treeLi.data('node').name).focus();
+			    			if (renameTo[0].setSelectionRange) {
+			    				renameTo[0].setSelectionRange(0,renameTo.val().length);
+			    			}
+		    			} else {
+		    				renameTo.focus();
+		    			}
 		    			break;
 		    	
 		    	}
@@ -536,41 +547,48 @@ $(document).ready(function() {
 			$('#contextMenu .renameItem').addClass('hide');
 		})
 		
-		$('#renameForm').bind('submit', function(e) {
-			e.preventDefault();
-			var _self = $(this);
-			if (isFormValid(_self)) {
-				var node =_self.data('node');
-				if (node.parent) {
-					var newName = _self.find('input[name=itemRename]').val();
-					$.post(node.path+'?:operation=move&:dest='+node.parent.path+'/'+newName)
-	    			.done(function(data) {
-	    				var dataHtml = $(data);
-	    				var status = dataHtml.find('#Status').text();
-	    				var message = dataHtml.find('#Message').text();
-	    				if (status.indexOf('20') == 0) { // Ok
-	    					var parentNode = node.parent;
-	    					// remove the movedNode
-	    					browseTree.tree('removeNode', node);
-	    					// Refresh the captured node
-	    					refreshNode(parentNode, parentNode.path+'/'+newName);
-							// close any tab if node is file and opened
-							var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
-							if (tab.length) {
-								tab.find('span').trigger('click');
-							}
-	    				}
-	    			}).fail(function(jqXHR, textStatus, errorThrown) {
-	    				var dataHtml = $(jqXHR.responseText);
-	    				var status = dataHtml.find('#Status').text();
-	    				var message = dataHtml.find('#Message').text();
-	    				$('#mainErrorMsg').text(status+": Error renaming <strong>"+node.name+"</strong> to  <strong>"+newName+"</strong> caused by "+message).show();
-	    			});
-	    			$('#contextMenu').hide();
+		// Disable the actual submit and only through AJAX
+		$('#renameForm').on('submit', function() { return false;});
+		// Update when enter key is pressed
+		$('#contextMenu input[name=renameTo]').on('click dblclick', function(e) {
+			e.stopPropagation();
+		}).on('keyup', function(e) {
+			if (e.which == 13) {
+				e.preventDefault();
+				e.stopPropagation();
+				var $form = $('#renameForm');
+				if (isFormValid($form)) {
+					var node = $form.data('node');
+					if (node && node.parent) {
+						var newName = $form.find('input[name=renameTo]').val();
+						$.post(node.path+'?:operation=move&:dest='+node.parent.path+'/'+newName)
+		    			.done(function(data) {
+		    				var dataHtml = $(data);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				if (status.indexOf('20') == 0) { // Ok
+		    					var parentNode = node.parent;
+		    					// remove the movedNode
+		    					browseTree.tree('removeNode', node);
+		    					// Refresh the captured node
+		    					refreshNode(parentNode, parentNode.path+'/'+newName);
+								// close any tab if node is file and opened
+								var tab = pageTab.find('a[href=#'+node.uuid+']').parent();
+								if (tab.length) {
+									tab.find('span').trigger('click');
+								}
+		    				}
+		    			}).fail(function(jqXHR, textStatus, errorThrown) {
+		    				var dataHtml = $(jqXHR.responseText);
+		    				var status = dataHtml.find('#Status').text();
+		    				var message = dataHtml.find('#Message').text();
+		    				$('#mainErrorMsg').text(status+": Error renaming <strong>"+node.name+"</strong> to  <strong>"+newName+"</strong> caused by "+message).show();
+		    			});
+					} else {
+	    				$('#mainErrorMsg').text("Cannot modify ROOT NODE").show();
+					}
+					$('#contextMenu').hide();
 				}
 			}
-			return false;
 		})
-		
-
 	});

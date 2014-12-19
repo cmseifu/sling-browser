@@ -344,7 +344,7 @@ input[type=submit] {
 		  		<span class="input-group-addon">
         			<input data-title="multi value" type="checkbox" id="propMultiple"  />
       			</span>
-		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" placeholder="new property name"/>
+		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" placeholder="click to add property" autocapitalize="off" autocorrect="off" autocomplete="off"/>
 		  	 	<div class="input-group-btn">
 			  	  <div class="dropdown" id="addPropMenu">
 				  	<button class="btn btn-default dropdown-toggle" id="addPropMenuDropdown" data-toggle="dropdown" aria-expanded="true">

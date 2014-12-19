@@ -227,6 +227,7 @@
 		addPropModal.removeData().data({name:name, type:type, multiple:isMultiple});
 		addPropModal.find('.modal-title').text(type+(isMultiple?'[]':'')+': '+propName.val());
 		addPropModal.find('.modal-body').empty().append(out.join(''));
+		addPropModal.find('.errorMsg').hide();
 		addPropModal.modal('show');
 		toggleLock();
 	}
@@ -268,7 +269,7 @@
 					var status = dataHtml.find('#Status').text();
 					var message = dataHtml.find('#Message').text();
 					
-					$errorMsg.text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
+					$form.find('.errorMsg').text(status+": Error saving <strong>"+resourcePath+"</strong> caused by "+message).show();
 				})
 			}
 		}
