@@ -92,7 +92,7 @@ $(document).ready(function() {
 					supportedFileType : node.supportedFileType
 				}
 				$li.data('node', node);
-				$li.attr('data-path', node.path)
+				$li.attr('data-name', node.name);
 				$li.data('simpleNode', simpleNode);
 		    },
 			dataUrl : function (node) { 
@@ -472,10 +472,27 @@ $(document).ready(function() {
 		    			break;
 		    		case 'paste' : 
 		    			var clipboardNode = $('#contextMenu').data('clipboard');
-		    			var newPath = treeLi.data('node').path+'/'+ clipboardNode.name;
+		    			var childExist = treeLi.find('>ul>li[data-name=\''+clipboardNode.name+'\']').length;
+		    			var newPath = [treeLi.data('node').path,'/'];
+		    			if (childExist) {
+		    				var names = [];
+		    				treeLi.find('>ul>li[data-name^=\''+clipboardNode.name+'\']').each(function() {
+		    					var nameToken = $(this).attr('data-name').substring(clipboardNode.name.length-1).split(' ');
+		    					if (nameToken.length == 2) {
+		    						var num = parseInt(nameToken[1]);
+		    						names.push(isNaN(num) ? 1 : num)
+		    					}
+		    				});
+		    				if (names.length) {
+		    					//descending
+		    					names.sort(function(a, b){return b-a});
+		    				} else {
+		    					names.push(1);
+		    				}
+		    				newPath.push(clipboardNode.name + " " + (++names[0]));
+		    			}
 		    			
-		    			
-	    				$.post(clipboardNode.path+'?:operation=copy&:replace=false&:dest='+treeLi.data('node').path+'/')
+	    				$.post(clipboardNode.path+'?:operation=copy&:replace=false&:dest='+newPath.join(''))
 		    			.done(function(data) {
 		    				var dataHtml = $(data);
 		    				var status = dataHtml.find('#Status').text();
