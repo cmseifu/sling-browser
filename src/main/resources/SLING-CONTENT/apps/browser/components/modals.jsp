@@ -16,7 +16,7 @@
 				<div class="modal-body">
 					<div class="alert alert-danger errorMsg" style="display:none"></div>
 					<div class="input-group-btn">
-						<input type="text" class="form-control" id="newNodeName" required pattern="[\w\:\.]+" placeholder="child name"/>
+						<input type="text" class="form-control" id="newNodeName" required pattern="[\w\:\.\s]+" placeholder="child name"/>
 						<%
 							NodeTypeIterator nodeTypes = currentNode.getSession().getWorkspace().getNodeTypeManager().getPrimaryNodeTypes();
 						%>
