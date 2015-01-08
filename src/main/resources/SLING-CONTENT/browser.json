@@ -2,9 +2,12 @@
     "jcr:primaryType" : "sling:Folder",
     "jcr:title" : "Sling Browser",
     "sling:resourceType" : "browser",
+    "jcr:mixinTypes": [
+        "mix:lockable"
+    ],
     "security:acl" : [
     	{	
-    		"principal" : "anonymous",
+    		"principal" : "everyone",
     		"granted" : ["jcr:read"]
     	}
     ]

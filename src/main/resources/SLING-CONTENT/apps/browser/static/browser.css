@@ -280,3 +280,9 @@ input[type=submit] {
 	top:0px;
 }
 
+#resultPanel {
+	height:95%;
+	padding:10px;
+	overflow:auto;
+}
+

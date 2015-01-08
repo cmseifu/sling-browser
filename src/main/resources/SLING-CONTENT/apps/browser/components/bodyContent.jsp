@@ -19,10 +19,22 @@
 		<span id="small-screen" class="glyphicon glyphicon-resize-small" title="small"></span>
 		<ul id="pageTab" class="nav nav-tabs">
 			<li><a href="#tabProperties" data-toggle="tab">Properties</a></li>
+			<li><a href="#tabSearch" data-toggle="tab">Search</a></li>
 		</ul>
 		<div id="pageTabContent" class="tab-content">
 			<div class="tab-pane" id="tabProperties">
 				<iframe id="propertiesFrame" style="border:0px;width:100%;height:100%" src=""></iframe>
+			</div>
+			<div class="tab-pane" id="tabSearch">
+				<form id="searchForm" action="/browser.search.html">
+					<div class="input-group">
+				      <input type="text" name="query" class="form-control" placeholder="Search for..." id="searchField">
+				      <span class="input-group-btn">
+				        <button class="btn btn-default" type="button" id="searchSubmitBtn">Go!</button>
+				      </span>
+				    </div>
+				</form>
+				<div id="resultPanel"></div>
 			</div>
 			
 		</div>
