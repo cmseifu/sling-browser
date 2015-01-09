@@ -242,7 +242,7 @@ $(document).ready(function() {
 		if (storeState) {
 			pushState(node);
 		}
-		browseTree.tree('openNode', node);
+		//browseTree.tree('openNode', node);
 		
 	}
 	
@@ -644,7 +644,7 @@ $(document).ready(function() {
 	
 	$('#searchForm').on('submit', function (e) {
 		e.preventDefault();
-		resultPanel.empty().html('<a id="loadMore"></a>');
+		resultPanel.empty().html('<a id="loadMore">more...</a>');
 		new ContentLoader(
 				{	
 					"fillType": "auto", 
@@ -652,6 +652,7 @@ $(document).ready(function() {
 					"container" : "#resultPanel",
 					"dataType": "html", 
 					"loadOnElement": "#loadMore", 
+					"maxScrollLimit": 10,
 					"ajaxUrl" : "/browser.search.html?query="+$('#searchField').val()
 				}, 
 				loaderHandlers
