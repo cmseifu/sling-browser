@@ -644,7 +644,14 @@ $(document).ready(function() {
 	
 	$('#searchForm').on('submit', function (e) {
 		e.preventDefault();
-		resultPanel.empty().html('<a id="loadMore">more...</a>');
+		var val = $('#searchField').val();
+		if (val.indexOf('/') == 0 && val.indexOf('//')==-1) {
+			currentPath = val;
+			history.replaceState(currentPath, currentPath, "/browser.html"+currentPath);
+			restoreState(buildPaths());
+			return false;
+		}
+		resultPanel.empty().html('<a id="loadMore"></a>');
 		new ContentLoader(
 				{	
 					"fillType": "auto", 
