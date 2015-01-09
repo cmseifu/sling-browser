@@ -221,6 +221,7 @@
 			_self.loaded = true;
 			_self.loadOnElement.remove();
 			_self.detachScroll();
+			_self.container = null;
 			_self.load = function () {};
 			  
 		}
