@@ -7,9 +7,9 @@ Requires Sling 6.x+
 
 ## Installation
 
-1. download the project from [sling-browser](https://github.com/cmseifu/sling-browser) source from github and extract the files 
+1. clone this project and extract the files 
 
-2. run mvn install 
+2. run mvn install on the project root
 
 3. vist the sling system console on http://{host}:{port}/system/console
 
@@ -21,16 +21,16 @@ Requires Sling 6.x+
 
 ## Browser supported
 
-All modern browsers with HTML5 support.
+Modern browsers with HTML5 support.
 
 ## What is included
 
-- Developed on [Bootstrap 3.3.0](http://getbootstrap.com/) and [jQuery 2.1.1](http://jquery.com/) for modern look and feel.
-- Repository Explorer using [jQtree](http://mbraak.github.io/jqTree/)
-- GUI with [Sling Post Servlet](http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html) as server backend
+- Build on top of [Bootstrap 3.3.0](http://getbootstrap.com/) and [jQuery 2.1.1](http://jquery.com/) for modern look and feel.
+- Repository Tree Explorer using [jQtree](http://mbraak.github.io/jqTree/) with lazy load
+- GUI with [Sling Post Servlet](http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html) as backend
 - Copy/Paste/Duplicate/Move/Rename
-- Color syntax editor for files using [Ace IO](http://ace.c9.io/)
+- Color syntax editor for supported files using [Ace IO](http://ace.c9.io/)
 - Add/Remove mixln
 - Search by XPATH/JCR_SQL(2)/GQL
-- Browser supported local storage for user profile (e.g. Refresh will restores all open tabs and last visited item)
+- Browser local storage for user profile (e.g. Refresh will restores all open tabs and last visited item)
 
