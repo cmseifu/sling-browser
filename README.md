@@ -25,7 +25,7 @@ Modern browsers with HTML5 support.
 ## What is included
 
 - Build on top of [Bootstrap 3.3.0](http://getbootstrap.com/) and [jQuery 2.1.1](http://jquery.com/) for modern look and feel.
-- Repository Tree Explorer using [jQtree](http://mbraak.github.io/jqTree/) with lazy load
+- Repository Tree Explorer using [jQtree](http://mbraak.github.io/jqTree/)
 - GUI with [Sling Post Servlet](http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html) as backend
 - Copy/Paste/Duplicate/Move/Rename
 - Color syntax editor for supported files using [Ace IO](http://ace.c9.io/)
