@@ -1,7 +1,6 @@
 # Sling Browser
-=============
 
-Simple sling browser to explore the sling content repository, similar to default sling explorer or jcr-explorer.
+Simple sling browser to explore the sling content repository, similar to Sling default explorer and other jcr browser/explorer projects.
 
 Requires Sling 6.x+
 
