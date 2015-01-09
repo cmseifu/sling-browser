@@ -21,7 +21,7 @@
 	}
 	queryStr = queryStr.trim();
 	// Detect query language
-	if (queryStr.indexOf('/') == 0) {
+	if (queryStr.indexOf("//") == 0) {
 		language = Query.XPATH;
 	} else if (queryStr.startsWith("select")) {
 		if (queryStr.indexOf('[') != -1) {
