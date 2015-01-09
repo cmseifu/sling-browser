@@ -15,7 +15,7 @@
 <% 
 	String queryStr = request.getParameter("query");
 	String language = null;
-	if (queryStr == null) {
+	if (queryStr == null || queryStr.trim().length()==0) {
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		return;
 	}
@@ -67,9 +67,15 @@
 	} else {
 		// GQL
 		String limitStr = " limit:"+offset+".."+(offset+limit);
-		rows = GQL.execute(queryStr+(queryStr.indexOf("limit:") == -1 ? limitStr : ""), session);
+		StringBuilder sb = new StringBuilder();
+		if (queryStr.indexOf(':') == -1) {
+			sb.append("name:").append(queryStr).append(limitStr);
+		} else if (queryStr.indexOf("limit:") == -1){
+			sb.append(queryStr).append(limitStr);
+		}
+		rows = GQL.execute(sb.toString(), session);
 	}
-	if (rows.hasNext()) { 
+	if (rows != null && rows.hasNext()) { 
 		while (rows.hasNext()) {
 			Row row = rows.nextRow();
 			out.println("<div><a href=\""+row.getPath()+"\">"+row.getPath()+"</a></div>");
