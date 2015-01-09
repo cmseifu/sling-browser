@@ -28,7 +28,7 @@
 			<div class="tab-pane" id="tabSearch">
 				<form id="searchForm" action="/browser.search.html">
 					<div class="input-group">
-				      <input type="text" name="query" class="form-control" placeholder="Search for..." id="searchField">
+				      <input type="text" name="query" class="form-control" placeholder="Search by PATH, XPATH, SQL(2), or GQL" id="searchField">
 				      <span class="input-group-btn">
 				        <button class="btn btn-default" type="submit" id="searchSubmitBtn">Go!</button>
 				      </span>
