@@ -269,33 +269,17 @@ body.lock .mixinContainer.editing {
 	z-index:101;
 }
 
-#propMultiple:before {
-	content: "";
-	position: absolute;
-	width: 0;
-	height: 0;
-	border-bottom: 10px solid #ffcb66;
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
-	-webkit-transition: opacity 0.3s ease-in-out;
-	-moz-transition: opacity 0.3s ease-in-out;
-	transition: opacity 0.3s ease-in-out;
-	opacity: 0;
-	visibility:hidden;
-	top: 20px;
-	right: 5px;
-}
 
 #propMultiple:after {
 	content: attr(data-title);
 	font-size: 12px;
 	text-align: center;
-	position: absolute;
+	position: fixed;
 	z-index: 102;
-	top: 30px;
 	border: 1px solid #E7C232;
 	width: 80px;
-	left: -25px;
+	margin-left: -30px;
+	margin-top: 15px;
 	background: #F9DEA6;
 	padding: 5px;
 	color: black;
@@ -303,7 +287,7 @@ body.lock .mixinContainer.editing {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	opacity: 0;
-	visibility:hidden;
+	visibility: hidden;
 	-webkit-transition: opacity 0.3s ease-in-out;
 	-moz-transition: opacity 0.3s ease-in-out;
 	transition: opacity 0.3s ease-in-out;
@@ -330,22 +314,36 @@ input[type=submit] {
 	visibility: hidden;display:none;
 }
 
+.addPropGroup {
+	width:55%;
+}
+
+
+.addPropGroup .input-group-addon {
+	border-left:0px;
+}
+
+
+
+.mixins {
+	float:right;
+}
+
  </style>
 </head>
 <body>
 	<div class="container">
 		 <form>
     	  <input type="submit" />
-		  <div class="btn-group" role="group" aria-label="..."> 
-		  	<button type="button" class="btn btn-default" id="mixinBtn">mixins</button>
+    	  <div class="btn-group mixins" role="group" aria-label="..."> 
+		  		<button type="button" class="btn btn-default" id="mixinBtn">mixins</button>
 		  </div>
-		 
-    	 
-		  <div class="input-group" role="group" aria-label="..."> 
-		  		<span class="input-group-addon">
+    	  <div class="input-group addPropGroup" role="group" aria-label="..."> 
+    	  		
+		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" placeholder="add property" autocapitalize="off" autocorrect="off" autocomplete="off"/>
+		  	 	<span class="input-group-addon">
         			<input data-title="multi value" type="checkbox" id="propMultiple"  />
       			</span>
-		  		<input type="text" class="form-control" id="propName" required pattern="[a-z]+[\:]?[a-zA-Z0-9]+" placeholder="click to add property" autocapitalize="off" autocorrect="off" autocomplete="off"/>
 		  	 	<div class="input-group-btn">
 			  	  <div class="dropdown" id="addPropMenu">
 				  	<button class="btn btn-default dropdown-toggle" id="addPropMenuDropdown" data-toggle="dropdown" aria-expanded="true">
@@ -366,6 +364,10 @@ input[type=submit] {
 					</div>
 			  	</div>
 		  </div>
+		 
+		 
+    	 
+
 		  </form>
 		
 		<table class="table table-condensed">
