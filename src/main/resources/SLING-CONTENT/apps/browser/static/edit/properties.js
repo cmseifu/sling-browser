@@ -76,7 +76,7 @@
 		var type = trElement.data('type');
 		var isMultiple =  trElement.data('multiple')
 		var valueEdit = trElement.find('.value-edit');
-		var out = [];
+		var out = ['<div class="fieldItems">'];
 		
 		var originalValues =  valueEdit.find('span').map(function() { return $(this).text(); }).get();
 		for (var i=0,j=originalValues.length;i<j;i++) {
@@ -85,6 +85,7 @@
 		if (isMultiple) {
 			out.push('<span class="glyphicon glyphicon-plus" data-action="add-prop"></span>');
 		}
+		out.push('</div>');
 		valueEdit.empty().append(propertyFormTmpl.clone().prepend(out.join('')));
 		valueEdit.on('click', function(e) {
 			var _propRoot = $(this).closest('tr');
