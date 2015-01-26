@@ -1,6 +1,6 @@
 # Sling Browser
 
-Simple sling browser to explore the sling content repository, similar to Sling default explorer and other jcr browser/explorer projects.
+Simple Apache Sling Browser to explore the content repository, similar to Sling default explorer and other JCR Explorer projects.
 
 Requires Sling 6.x+
 
@@ -18,7 +18,7 @@ Requires Sling 6.x+
 
 ## Browser supported
 
-Modern browsers with HTML5 support.
+Most modern web browsers with HTML5 support.
 
 ## What is included
 
