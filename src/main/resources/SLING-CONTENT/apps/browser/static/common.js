@@ -85,6 +85,14 @@ function isSafari() {
 	return /^((?!chrome).)*safari/i.test(navigator.userAgent);
 }
 
+// Escape % as %25 on browser
+function escapePercent(str) {
+	if (str && str.indexOf('%')!=-1 && str.indexOf('%25')==-1 ) {
+		str = str.replace(/%/g,'%25');
+	}
+	return str;
+}
+
 // Field validation
 function isValidField(field) {
 	if (typeof field.willValidate !== "undefined") {
@@ -136,68 +144,90 @@ function isFormValid($form) {
 
 
 /* Local Storage methods, persist to host */
-   /* Use check if localStorage is supported */
-	function hasLocalStorage() {
-		return (typeof localStorage !== "undefined" && localStorage != null);
+
+/* Use check if localStorage is supported */
+function hasLocalStorage() {
+	return (typeof localStorage !== "undefined" && localStorage != null);
 	}
    
-	/* Retrieve the string from storage */
-   function getLocalStorage(key) {
+/* Retrieve the string from storage */
+function getLocalStorage(key) {
 	   return hasLocalStorage() ? localStorage.getItem(key) : null;
    }
    
    /* Retrive the JSON object from storage */
-	function getJsonLocalStorage(key) {
-		try {
-			return JSON.parse(getLocalStorage(key));
-		} catch (e) {
-			console.log(key+" does not seem to have JSON format, try use getLocalStorage instead ("+e+")");
-		}
+function getJsonLocalStorage(key) {
+	try {
+		return JSON.parse(getLocalStorage(key));
+	} catch (e) {
+		console.log(key+" does not seem to have JSON format, try use getLocalStorage instead ("+e+")");
 	}
-	
-	/* Set to storage, if object it will be stringified */
-	function setLocalStorage(key, value) {
-		if (hasLocalStorage()) {
-			localStorage.setItem(key, typeof value == 'string' ? value : JSON.stringify(value));
-		}
+}
+
+/* Set to storage, if object it will be stringified */
+function setLocalStorage(key, value) {
+	if (hasLocalStorage()) {
+		localStorage.setItem(key, typeof value == 'string' ? value : JSON.stringify(value));
 	}
-	/* Remove the key from storage */
-	function clearLocalStorage(key) {
-		if (hasLocalStorage()) {
-			localStorage.removeItem(key);
-		}
+}
+/* Remove the key from storage */
+function clearLocalStorage(key) {
+	if (hasLocalStorage()) {
+		localStorage.removeItem(key);
 	}
-	
-	/* Session Storage methods, persist only through out the life of the browser tab */
-   /* Use check if sessionStorage is supported */
-	function hasSessionStorage() {
-		return (typeof sessionStorage !== "undefined" && sessionStorage != null);
-	}
+}
+
+/* Session Storage methods, persist only through out the life of the browser tab */
+
+/* Use check if sessionStorage is supported */
+function hasSessionStorage() {
+	return (typeof sessionStorage !== "undefined" && sessionStorage != null);
+}
    
-	/* Retrieve the string from storage */
-   function getSessionStorage(key) {
-	   return hasSessionStorage() ? sessionStorage.getItem(key) : null;
-   }
+/* Retrieve the string from storage */
+function getSessionStorage(key) {
+	return hasSessionStorage() ? sessionStorage.getItem(key) : null;
+}
    
-   /* Retrive the JSON object from storage */
-	function getJsonSessionStorage(key) {
-		try {
-			return JSON.parse(getSessionStorage(key));
-		} catch (e) {
-			console.log(key+" does not seem to have JSON format, try use getSessionStorage instead ("+e+")");
-		}
-		
+/* Retrive the JSON object from storage */
+function getJsonSessionStorage(key) {
+	try {
+		return JSON.parse(getSessionStorage(key));
+	} catch (e) {
+		console.log(key+" does not seem to have JSON format, try use getSessionStorage instead ("+e+")");
 	}
 	
-	/* Set to storage, if object it will be stringified */
-	function setSessionStorage(key, value) {
-		if (hasSessionStorage()) {
-			sessionStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
-		}
+}
+
+/* Set to storage, if object it will be stringified */
+function setSessionStorage(key, value) {
+	if (hasSessionStorage()) {
+		sessionStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
 	}
-	/* Remove the key from storage */
-	function clearSessionStorage(key) {
-		if (hasSessionStorage()) {
-			sessionStorage.removeItem(key);
-		}
+}
+/* Remove the key from storage */
+function clearSessionStorage(key) {
+	if (hasSessionStorage()) {
+		sessionStorage.removeItem(key);
 	}
+}
+
+/* session */
+(function() {
+	if (window.top == window.self) {
+		setInterval(function () {
+			$.get('/system/sling/info.sessionInfo.json', function(data) {
+				if (slingUserId != data.userID) {
+					window.location.reload(true);
+				}
+			})
+		},1000*60*5);
+	}
+})()
+
+/* pre-run fix up vars and form paths */
+resourcePath = escapePercent(resourcePath);
+$('form').each(function () { 
+	var _self = $(this);
+	_self.attr('action', escapePercent(_self.attr('action')));
+});

@@ -81,6 +81,8 @@ $(document).ready(function() {
 			if (canOpen) {
 				$li.on('dblclick', fileOpenHandler);
 			}
+			node.path = escapePercent(node.path);
+			
 			/* This copied the properties for serialization when tabs are open or restore */
 			var simpleNode = {
 				name : node.name,
@@ -560,7 +562,7 @@ $(document).ready(function() {
 	// Update when enter key is pressed
 	$('#contextMenu input[name=renameTo]').on('click dblclick', function(e) {
 		e.stopPropagation();
-	}).on('keyup', function(e) {
+	}).on('keydown', function(e) {
 		if (e.which == 13) {
 			e.preventDefault();
 			e.stopPropagation();

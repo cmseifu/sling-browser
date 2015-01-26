@@ -147,11 +147,12 @@ body.lock .screenLock {
 }
 
 
-.fieldItem.single {
+.fieldItem {
 	width:100%;
+	clear:both;
 }
 
-.fieldItem.single input{
+.fieldItem input{
 	width:95%;
 }
 
@@ -499,6 +500,7 @@ input[type=submit] {
 	<div class="screenLock"></div>
 	<script type="text/javascript" src="${staticRoot}/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="${staticRoot}/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="${staticRoot}/sortable-1.0/sortable.min.js"></script>
 	<script>
 		var resourcePath = "${resource.path}";
 		var slingUserId = "${slingRequest.resourceResolver.userID}";
