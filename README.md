@@ -31,3 +31,8 @@ Most modern web browsers with HTML5 support.
 - Search by XPATH/JCR_SQL(2)/GQL
 - Browser local storage for user profile (e.g. Refresh will restores all open tabs and last visited item)
 
+## Screen Shot
+
+![Sling Browser Screenshot Editing](screenshot_file.png?raw=true "Editing")
+![Sling Browser Screenshot Properties](screenshot_properties.png?raw=true "Properties")
+![Sling Browser Screenshot Properties Editing](screenshot_properties_edit.png?raw=true "Property Edit")
