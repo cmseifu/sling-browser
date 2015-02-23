@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.AbstractResource;
 import org.apache.sling.api.resource.Resource;
@@ -121,6 +122,10 @@ public class BrowserResource extends AbstractResource {
 			return null;
 		}
 		return getNode().getIdentifier();
+	}
+	
+	public String getPseudoUUID() throws RepositoryException {
+		return DigestUtils.md5Hex(getNode().getIdentifier());
 	}
 	
 	public String getSimpleNodeType() throws RepositoryException {
