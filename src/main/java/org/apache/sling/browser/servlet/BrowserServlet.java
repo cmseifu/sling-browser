@@ -109,7 +109,7 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 					jsonWriter.object().key("label").value(path.equals(ROOT_PATH) ? "jcr:root" : browserResource.getNode().getName());
 						jsonWriter.key("path").value(browserResource.getPath());
 						jsonWriter.key("id").value(browserResource.getPath());
-						jsonWriter.key("uuid").value(browserResource.getIdentifier());
+						jsonWriter.key("uuid").value(browserResource.getPseudoUUID());
 						jsonWriter.key("editable").value(browserResource.isModfiable());
 						jsonWriter.key("nodeType").value(browserResource.getSimpleNodeType());
 						if (browserResource.getParent() != null) {
@@ -142,7 +142,7 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 				jsonWriter.object().key("label").value(resource.getNode().getName());
 				jsonWriter.key("path").value(resource.getPath());
 				jsonWriter.key("id").value(resource.getPath());
-				jsonWriter.key("uuid").value(resource.getIdentifier());
+				jsonWriter.key("uuid").value(resource.getPseudoUUID());
 				jsonWriter.key("editable").value(resource.isModfiable());
 				jsonWriter.key("nodeType").value(resource.getSimpleNodeType());
 				if (resource.getParent() != null) {
