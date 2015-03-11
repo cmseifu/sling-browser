@@ -19,7 +19,7 @@
 			"adjustment" :  0, // Default 0, how many pixel of adjustment prior trigger the load
 			"maxCacheSize" : 2, // How many request should be preloaded
 			"maxScrollLimit" : -1, // Default -1 (a.k.a infinite), if isScroll is true and max request limited is reached, stop the scroll event and let user manually load it.
-			"loadOn" : ["onebot.compacted"] // Besides the scroll, other custom events can be registered on the loadOnElement.  Once fired, it will trigger a load. 
+			"loadOn" : ["compacted"] // Besides the scroll, other custom events can be registered on the loadOnElement.  Once fired, it will trigger a load. 
 		}	  
 		// User provided options
 		if (opts != null) {
