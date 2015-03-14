@@ -64,7 +64,7 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 	private ResourceResolverFactory resolverFactory;
 	
 	@Reference
-	private MimeTypeService mineTypeService;
+	private MimeTypeService mimeTypeService;
 
 	@Override
 	protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
@@ -103,7 +103,7 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 		JSONWriter jsonWriter = new JSONWriter(response.getWriter());
 		try {
 			if (isModeChildren) {
-				listChildren(browserResource.getChildren().iterator(),jsonWriter, mineTypeService);
+				listChildren(browserResource.getChildren().iterator(),jsonWriter, mimeTypeService);
 			} else {
 				jsonWriter.array();
 					jsonWriter.object().key("label").value(path.equals(ROOT_PATH) ? "jcr:root" : browserResource.getNode().getName());
@@ -116,14 +116,14 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 							jsonWriter.key("parentId").value(browserResource.getParent().getPath());
 						}
 						if (browserResource.getSimpleNodeType().equals(JcrConstants.NT_FILE)) {
-							jsonWriter.key("fileType").value(getSupportedFileType(browserResource.getNode(), mineTypeService) );
+							jsonWriter.key("fileType").value(getSupportedFileType(browserResource.getNode(), mimeTypeService) );
 							boolean hasMimetype = browserResource.getNode().hasProperty("jcr:content/jcr:mimeType");
 							jsonWriter.key("mimeType").value(hasMimetype ? browserResource.getNode().getProperty("jcr:content/jcr:mimeType").getString() : null);
 						}
 						Iterator<BrowserResource> it = browserResource.getChildren().iterator();
 						if (it.hasNext()) {
 							jsonWriter.key("children");
-							listChildren(it,jsonWriter, mineTypeService);
+							listChildren(it,jsonWriter, mimeTypeService);
 						}
 					jsonWriter.endObject();
 				jsonWriter.endArray();
@@ -167,25 +167,19 @@ public class BrowserServlet extends SlingAllMethodsServlet {
 		if (!node.isNodeType(JcrConstants.NT_FILE)) {
 			return null;
 		}
-		boolean hasMimetype = node.hasProperty("jcr:content/jcr:mimeType");
+		
+		// return the extension if the file has one
 		int typeIndex = node.getName().lastIndexOf('.');
-		String ext = null;
 		if (typeIndex != -1) {
-			// File extension
-			ext = node.getName().substring(typeIndex + 1);
-		} else {
-			// Extension based on mimeType
-			ext =  mtService.getExtension(hasMimetype ? node.getProperty("jcr:content/jcr:mimeType").getString() : "");
+			return node.getName().substring(typeIndex + 1);
 		}
-		if (ext == null) {
-			return null;
-		}
-		for (String extension : SUPPORTED_EXTENSIONS) {
-			if (extension.equalsIgnoreCase(ext)) {
-				return ext;
-			}
-		}
-		  
+
+		// otherwise fall back on the mime type
+		if (node.hasProperty("jcr:content/jcr:mimeType")) {
+			return mtService.getExtension(node.getProperty("jcr:content/jcr:mimeType").getString());
+		};
+		
+		// or give up
 		return null;
 	}
 	
